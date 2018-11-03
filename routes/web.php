@@ -18,10 +18,20 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+Route::group(['middleware' => 'web'], function () {
+  Route::get('/play', [
 
-Route::get('/play', [
+      'uses' => 'GameController@index',
+      'as' => 'game.play'
 
-    'uses' => 'GameController@index',
-    'as' => 'game.play'
+  ]);
 
-]);
+  Route::post('/findGame', [
+
+      'uses' => 'GameController@startGame'
+
+  ]);
+
+
+
+});
