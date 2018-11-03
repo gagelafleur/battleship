@@ -32,6 +32,18 @@ Route::group(['middleware' => 'web'], function () {
 
   ]);
 
+  Route::post('/sendMessage', [
+
+      'uses' => 'GameController@sendMessage'
+
+  ]);
+
+  Route::post('/getMessages', [
+
+      'uses' => 'GameController@getMessages'
+
+  ]);
+
 
 
 });
