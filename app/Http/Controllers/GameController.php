@@ -35,7 +35,7 @@ class GameController extends Controller
     $game = $this->findGame();
     $currentPlayer = Auth::User();
 
-    if(count($game) > 0){
+    if(count($game) > 0 && $game->player1Id !== $currentPlayer->id){
 
       $game->player2Id = $currentPlayer->id;
       $game->status = "PLAYING";
@@ -126,6 +126,55 @@ class GameController extends Controller
     return response()->json([
         'success'  => true,
         'data' => $chat
+    ]);
+
+  }
+
+  public function getGameStatus(Request $request)
+  {
+
+    $this->validate($request, [
+
+      'id' => 'required|numeric',
+
+    ]);
+
+    $game = Game::where('id', $request['id'])->first();
+    $user = Auth::user();
+
+    if($game->player1Id !== NULL){
+
+      if($game->player1Id === $user->id){
+        $game->player1Name = $user->name;
+      }else{
+        $game->player1Name = User::where('id', $game->player1Id)->first()->name;
+        $game->opponentName = $game->player1Name;
+      }
+
+    }else{
+
+      $game->player1Name = NULL;
+
+    }
+
+    if($game->player2Id !== NULL){
+
+      if($game->player2Id === $user->id){
+        $game->player2Name = $user->name;
+      }else{
+        $game->player2Name = User::where('id', $game->player2Id)->first()->name;
+        $game->opponentName = $game->player2Name;
+      }
+
+    }else{
+
+      $game->player2Name = NULL;
+
+    }
+
+    return response()->json([
+        'success'  => true,
+        'data' => $game
     ]);
 
   }

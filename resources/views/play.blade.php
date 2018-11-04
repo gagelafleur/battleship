@@ -6,7 +6,15 @@
     <div class="row">
         <div class="col-md-8 col-md-offset-2">
             <div class="panel panel-default">
-                <div class="panel-heading">Gameplay</div>
+                <div class="panel-heading">
+
+                  Gameplay Status: <span class = "status">SETUP</span>
+                  <div class = 'opponent'>
+                    Opponent: <span class = "opponent-name"></span>
+                  </div>
+
+
+                </div>
 
                 <div>
                   <form id = "starter" method="POST">

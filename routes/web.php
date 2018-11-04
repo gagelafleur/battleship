@@ -44,6 +44,12 @@ Route::group(['middleware' => 'web'], function () {
 
   ]);
 
+  Route::post('/getGameStatus', [
+
+      'uses' => 'GameController@getGameStatus'
+
+  ]);
+
 
 
 });

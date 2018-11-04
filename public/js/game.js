@@ -2,7 +2,8 @@
     'use strict';
 
     var game = undefined,
-        chatPoller = 0;
+        chatPoller = 0,
+        gamePoller = 0;
 
 
 
@@ -25,6 +26,7 @@
           $( "input[name*='gameId']" ).val(game.id);
           if(typeof game != 'undefined'){
             chatPoller = setInterval(pollChat, 2500);
+            gamePoller = setInterval(pollGame, 5000);
           }
 
 
@@ -82,6 +84,29 @@
               //console.log(`${message} = ${chat[message]}`);
               $(".messages").html(`${$(".messages").html()}<div>${chat[message].userName}: ${chat[message].message}</div>`);
             }
+          },
+          failure: function() {
+
+          },
+        });
+      }
+    }
+
+    function pollGame(){
+      //console.log(game);
+      if(typeof game != 'undefined'){
+        $.ajax({
+          type: "POST",
+          async: true,
+          cache: false,
+          url: "/759/battleship/public/getGameStatus",
+          data: game,
+          dataType: "json",
+          success: function(data){
+            console.log( JSON.stringify(data.data) );
+            game = data.data;
+            $('.status').text(game.status);
+            $('.opponent-name').text(game.opponentName);
           },
           failure: function() {
 

@@ -5,3 +5,7 @@
   background-color: #efefef;
   border:solid black 1px;
 }
+
+.opponent{
+  float:right;
+}
