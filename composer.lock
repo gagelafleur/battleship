@@ -4,8 +4,56 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "b7904d07d1e1765a0a199aa11d6301a3",
+    "content-hash": "61241c75cfeb79937e889b35b7dd63dc",
     "packages": [
+        {
+            "name": "aschmelyun/larametrics",
+            "version": "1.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/aschmelyun/larametrics.git",
+                "reference": "4e5b0c26533457f74c07aae2624c0cd6e98d925b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/aschmelyun/larametrics/zipball/4e5b0c26533457f74c07aae2624c0cd6e98d925b",
+                "reference": "4e5b0c26533457f74c07aae2624c0cd6e98d925b",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.6.4"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^5"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Aschmelyun\\Larametrics\\LarametricsServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Aschmelyun\\Larametrics\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Andrew Schmelyun",
+                    "email": "me@aschmelyun.com",
+                    "homepage": "https://aschmelyun.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A self-hosted metrics and notifications platform for Laravel apps",
+            "time": "2018-11-02T09:51:06+00:00"
+        },
         {
             "name": "dnoegel/php-xdg-base-dir",
             "version": "0.1",
