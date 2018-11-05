@@ -63,7 +63,7 @@ class GameController extends Controller
   }
 
   public function findGame(){
-    $existingGame = Game::orderBy('created_at', 'asc')->whereNull('player2Id')->first();
+    $existingGame = Game::orderBy('created_at', 'asc')->whereNull('player2Id')->where("status", "=" , "WAITING")->first();
     return $existingGame;
   }
 
