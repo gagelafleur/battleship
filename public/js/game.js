@@ -134,6 +134,13 @@
             game = data.data;
             $('.status').text(game.status);
             $('.opponent-name').text(game.opponentName);
+            if(game.status === "ABANDONED"){
+              clearInterval(chatPoller);
+              clearInterval(gamePoller);
+              $('.opponent-name').text("");
+              window.alert('Your opponent has forfeited the match.');
+              window.location.href='http://gagelafleur.com/759/battleship/public/';
+            }
           },
           failure: function() {
 
