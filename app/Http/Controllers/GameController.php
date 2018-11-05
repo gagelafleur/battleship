@@ -67,6 +67,37 @@ class GameController extends Controller
     return $existingGame;
   }
 
+  public function forfeitGame(Request $request)
+  {
+    $this->validate($request, [
+
+      'id' => 'required|numeric',
+
+    ]);
+    $currentPlayer = Auth::User();
+    $game = Game::where('id', $request['id'])->first();
+
+
+    if($game->status === "PLAYING"){
+
+      if($game->player1Id === $currentPlayer->id){
+        $game->winner = $game->player2Id;
+      }else{
+        $game->winner = $game->player1Id;
+      }
+
+      $game->status = "ABANDONED";
+      $game->save();
+
+    }
+
+    return response()->json([
+        'success'  => true,
+        'data' => $game
+    ]);
+
+  }
+
   public function sendMessage(Request $request)
   {
 

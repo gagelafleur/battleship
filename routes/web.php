@@ -36,6 +36,12 @@ Route::group(['middleware' => 'web'], function () {
 
   ]);
 
+  Route::post('/forfeitGame', [
+
+      'uses' => 'GameController@forfeitGame'
+
+  ]);
+
   Route::post('/sendMessage', [
 
       'uses' => 'GameController@sendMessage'

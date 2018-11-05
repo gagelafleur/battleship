@@ -3,8 +3,36 @@
 
     var game = undefined,
         chatPoller = 0,
-        gamePoller = 0;
+        gamePoller = 0,
+        gameCleanedUp = false;
 
+    function abandon(){
+      if(typeof game != 'undefined' && game.status === "PLAYING"){
+        $.ajax({
+          type: "POST",
+          async: false,
+          cache: false,
+          url: "/759/battleship/public/forfeitGame",
+          data: game,
+          dataType: "json",
+          success: function(data){
+            console.log(data);
+            gameCleanedUp = true;
+          },
+          failure: function() {
+
+          },
+        });
+      }
+    }
+
+    $(window).on('beforeunload', function(){
+      abandon();
+    });
+
+    $(window).on('unload', function(){
+      abandon();
+    });
 
 
     $("#starter").on("submit",function(e){
@@ -93,7 +121,6 @@
     }
 
     function pollGame(){
-      //console.log(game);
       if(typeof game != 'undefined'){
         $.ajax({
           type: "POST",
