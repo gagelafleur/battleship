@@ -110,7 +110,7 @@
 
             for (let message in chat) {
               //console.log(`${message} = ${chat[message]}`);
-              $(".messages").html(`${$(".messages").html()}<div>${chat[message].userName}: ${chat[message].message}</div>`);
+              $(".messages").html(`${$(".messages").html()}<div>${chat[message].userName} (${chat[message].created_at}): ${chat[message].message}</div>`);
             }
           },
           failure: function() {
