@@ -70,6 +70,7 @@
 
     $("#chat").on("submit",function(e){
       e.preventDefault();
+
       console.log($( this ).serialize());
 
 
@@ -81,7 +82,9 @@
         data: $( this ).serialize(),
         dataType: "json",
         success: function(data){
+          $("input:text[name='chat']").val("");
           console.log( data );
+          pollChat();
         },
         failure: function() {
 
