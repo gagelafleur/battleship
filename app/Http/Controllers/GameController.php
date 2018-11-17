@@ -209,4 +209,62 @@ class GameController extends Controller
     ]);
 
   }
+
+
+  public static function printOwnBoard(){
+
+    $height = 40;
+    $width = 40;
+    $fill = "white";
+    $stroke = "blue";
+    $strokeWidth = 1;
+
+    $board = "";
+
+    for($i = 0; $i<10;$i++){
+
+      for($j = 0; $j<10;$j++){
+
+        $horizOffset = $width*$i;
+        $vertOffset = $height*$j;
+
+        $board .= "<rect id = 'square_{$i}_{$j}' x='{$horizOffset}' y='{$vertOffset}' height='{$height}' width='{$width}' fill='{$fill}' stroke='{$stroke}' stroke-width='{$strokeWidth}'></rect>";
+
+      }
+
+    }
+
+    print $board;
+
+
+  }
+
+  public static function printOpponentBoard(){
+
+    $height = 40;
+    $width = 40;
+    $fill = "white";
+    $stroke = "blue";
+    $strokeWidth = 1;
+
+    $board = "";
+
+    for($i = 0; $i<10;$i++){
+
+      for($j = 0; $j<10;$j++){
+
+        $horizOffset = $width*$i;
+        $vertOffset = $height*$j;
+
+        $board .= "<rect id = 'opponent_square_{$i}_{$j}' x='{$horizOffset}' y='{$vertOffset}' height='{$height}' width='{$width}' fill='{$fill}' stroke='{$stroke}' stroke-width='{$strokeWidth}'></rect>";
+
+      }
+
+    }
+
+    print $board;
+
+
+  }
+
 }
