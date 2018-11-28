@@ -26,7 +26,11 @@
 
                     {{ GameController::printOwnBoard() }}
 
-                  </svg>
+                    {{ GameController::randomizeBoard() }}
+
+
+                  </svg><br / />
+
                 </div>
 
                 <div class = "opponent-board">

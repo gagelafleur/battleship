@@ -267,4 +267,127 @@ class GameController extends Controller
 
   }
 
+  public static function randomizeBoard(){
+
+    $height = 40;
+    $width = 40;
+    $fill = "none";
+    $stroke = "black";
+    $strokeWidth = 4;
+
+    //need 5 ships, 1 - 5
+
+    $shipLengths = array(2,3,3,4,5);
+
+    //orientations
+    $shipOrientations = array();
+
+    for($i = 0; $i<sizeOf($shipLengths);$i++){
+
+      if(rand(0,1) == 0){
+        $shipOrientations[] = "H";
+      }else{
+        $shipOrientations[] = "V";
+      }
+
+    }
+
+    //print_r($shipOrientations);
+
+    //top-left coordinates for placement... with check for legal placements
+
+    $pieces = "";
+
+    /*for($i = 0; $i<10;$i++){
+
+      for($j = 0; $j<10;$j++){
+
+        $horizOffset = $width*$i;
+        $vertOffset = $height*$j;
+
+        $board .= "<rect id = 'opponent_square_{$i}_{$j}' x='{$horizOffset}' y='{$vertOffset}' height='{$height}' width='{$width}' fill='{$fill}' stroke='{$stroke}' stroke-width='{$strokeWidth}'></rect>";
+
+      }
+
+    }*/
+
+    $positions = array(
+      array("O","O","O","O","O","O","O","O","O","O"),
+      array("O","O","O","O","O","O","O","O","O","O"),
+      array("O","O","O","O","O","O","O","O","O","O"),
+      array("O","O","O","O","O","O","O","O","O","O"),
+      array("O","O","O","O","O","O","O","O","O","O"),
+      array("O","O","O","O","O","O","O","O","O","O"),
+      array("O","O","O","O","O","O","O","O","O","O"),
+      array("O","O","O","O","O","O","O","O","O","O"),
+      array("O","O","O","O","O","O","O","O","O","O"),
+      array("O","O","O","O","O","O","O","O","O","O")
+    );
+
+    for($i = 0; $i<sizeOf($shipLengths);$i++){
+
+
+
+      //$positioning = getRandomPosition();
+
+      if($shipOrientations[$i] === "H"){
+
+        $horizOffset = rand ( 0 , (9-$shipLengths[$i]) );
+        $vertOffset = rand ( 0 , 9 );
+
+        //print "offsets: "+ $horizOffset .", ".$vertOffset."   ";
+
+        for($j = 0; $j<$shipLengths[$i];$j++){
+          $positions[$vertOffset][$horizOffset+$j] = "X";
+        }
+
+        $horizOffset *= $width;
+        $vertOffset *= $height;
+        $shipWidth = $width*$shipLengths[$i];
+
+        $pieces .= "<rect id = 'ship_{$i}' x='{$horizOffset}' y='{$vertOffset}' height='{$height}' width='{$shipWidth}' fill='{$fill}' stroke='{$stroke}' stroke-width='{$strokeWidth}'></rect>";
+
+
+      }else if($shipOrientations[$i] === "V"){
+
+        $horizOffset = rand ( 0 , 9 );
+        $vertOffset = rand ( 0 , (9-$shipLengths[$i]));
+        //print "offsets: "+ $horizOffset .", ".$vertOffset."   ";
+        for($j = 0; $j<$shipLengths[$i];$j++){
+          $positions[$vertOffset+$j][$horizOffset] = "X";
+        }
+
+        $horizOffset *= $width;
+        $vertOffset *= $height;
+
+        $shipHeight = $height*$shipLengths[$i];
+
+        $pieces .= "<rect id = 'ship_{$i}' x='{$horizOffset}' y='{$vertOffset}' height='{$shipHeight}' width='{$width}' fill='{$fill}' stroke='{$stroke}' stroke-width='{$strokeWidth}'></rect>";
+
+      }
+
+    }
+
+    print $pieces;
+    //print sizeOf($positions);
+    /*for($k = 0; $k < count($positions); $k++){
+      foreach($positions[$k] as $key => $val){
+          echo ' ' . $val;
+      }
+      print '<br>';
+    }*/
+
+
+  }
+
+  public function getRandomPosition($length, $orientation){
+    $x = rand ( 0 , 9 );
+    $y = rand ( 0 , 9 );
+
+    if($orientation === "H" && $x + $length > 9){
+
+    }
+
+  }
+
 }
