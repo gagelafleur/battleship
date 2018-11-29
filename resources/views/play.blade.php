@@ -45,6 +45,10 @@
                   </svg>
                 </div>
 
+                <div style = "clear:both">
+                  
+                </div>
+
                 <div>
                   <form id = "starter" method="POST">
                     <input type="hidden" name="_token" value="{{ csrf_token() }}" />

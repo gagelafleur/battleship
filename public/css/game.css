@@ -9,3 +9,13 @@
 .opponent{
   float:right;
 }
+
+.board{
+  padding:25px;
+  float:left;
+}
+
+.opponent-board{
+  padding:25px;
+  float:right;
+}

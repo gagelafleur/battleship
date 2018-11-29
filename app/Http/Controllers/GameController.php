@@ -13,10 +13,15 @@ use DB;
 class GameController extends Controller
 {
 
+
   public function __construct()
   {
   	$this->middleware('auth');
+
+
+
   }
+
 
 
   /**
@@ -269,11 +274,19 @@ class GameController extends Controller
 
   public static function randomizeBoard(){
 
-    $height = 40;
-    $width = 40;
-    $fill = "none";
-    $stroke = "black";
-    $strokeWidth = 4;
+    $positions = array(
+      array("O","O","O","O","O","O","O","O","O","O"),
+      array("O","O","O","O","O","O","O","O","O","O"),
+      array("O","O","O","O","O","O","O","O","O","O"),
+      array("O","O","O","O","O","O","O","O","O","O"),
+      array("O","O","O","O","O","O","O","O","O","O"),
+      array("O","O","O","O","O","O","O","O","O","O"),
+      array("O","O","O","O","O","O","O","O","O","O"),
+      array("O","O","O","O","O","O","O","O","O","O"),
+      array("O","O","O","O","O","O","O","O","O","O"),
+      array("O","O","O","O","O","O","O","O","O","O")
+    );
+
 
     //need 5 ships, 1 - 5
 
@@ -311,83 +324,143 @@ class GameController extends Controller
 
     }*/
 
-    $positions = array(
-      array("O","O","O","O","O","O","O","O","O","O"),
-      array("O","O","O","O","O","O","O","O","O","O"),
-      array("O","O","O","O","O","O","O","O","O","O"),
-      array("O","O","O","O","O","O","O","O","O","O"),
-      array("O","O","O","O","O","O","O","O","O","O"),
-      array("O","O","O","O","O","O","O","O","O","O"),
-      array("O","O","O","O","O","O","O","O","O","O"),
-      array("O","O","O","O","O","O","O","O","O","O"),
-      array("O","O","O","O","O","O","O","O","O","O"),
-      array("O","O","O","O","O","O","O","O","O","O")
-    );
 
     for($i = 0; $i<sizeOf($shipLengths);$i++){
 
-
-
-      //$positioning = getRandomPosition();
-
-      if($shipOrientations[$i] === "H"){
-
-        $horizOffset = rand ( 0 , (9-$shipLengths[$i]) );
-        $vertOffset = rand ( 0 , 9 );
-
-        //print "offsets: "+ $horizOffset .", ".$vertOffset."   ";
-
-        for($j = 0; $j<$shipLengths[$i];$j++){
-          $positions[$vertOffset][$horizOffset+$j] = "X";
-        }
-
-        $horizOffset *= $width;
-        $vertOffset *= $height;
-        $shipWidth = $width*$shipLengths[$i];
-
-        $pieces .= "<rect id = 'ship_{$i}' x='{$horizOffset}' y='{$vertOffset}' height='{$height}' width='{$shipWidth}' fill='{$fill}' stroke='{$stroke}' stroke-width='{$strokeWidth}'></rect>";
-
-
-      }else if($shipOrientations[$i] === "V"){
-
-        $horizOffset = rand ( 0 , 9 );
-        $vertOffset = rand ( 0 , (9-$shipLengths[$i]));
-        //print "offsets: "+ $horizOffset .", ".$vertOffset."   ";
-        for($j = 0; $j<$shipLengths[$i];$j++){
-          $positions[$vertOffset+$j][$horizOffset] = "X";
-        }
-
-        $horizOffset *= $width;
-        $vertOffset *= $height;
-
-        $shipHeight = $height*$shipLengths[$i];
-
-        $pieces .= "<rect id = 'ship_{$i}' x='{$horizOffset}' y='{$vertOffset}' height='{$shipHeight}' width='{$width}' fill='{$fill}' stroke='{$stroke}' stroke-width='{$strokeWidth}'></rect>";
-
-      }
+      $pieces .= GameController::getLegalPosition($i, $shipLengths[$i], $shipOrientations[$i], $positions);
 
     }
 
+
     print $pieces;
-    //print sizeOf($positions);
-    /*for($k = 0; $k < count($positions); $k++){
-      foreach($positions[$k] as $key => $val){
-          echo ' ' . $val;
-      }
-      print '<br>';
-    }*/
+
 
 
   }
 
-  public function getRandomPosition($length, $orientation){
-    $x = rand ( 0 , 9 );
-    $y = rand ( 0 , 9 );
+  public static function getLegalPosition($idx, $length, $orientation, &$positions){
 
-    if($orientation === "H" && $x + $length > 9){
+    $height = 40;
+    $width = 40;
+    $fill = "none";
+    $stroke = "black";
+    $strokeWidth = 4;
 
+    print "getLegalPosition";
+
+    if($orientation === "H"){
+
+      $horizOffset = rand ( 0 , (9-$length) );
+      $vertOffset = rand ( 0 , 9 );
+
+      //print "offsets: "+ $horizOffset .", ".$vertOffset."   ";
+      $thisPositions = array();
+      for($j = 0; $j<$length;$j++){
+        $thisPositions[$vertOffset] = $horizOffset+$j;
+        if($idx == 0){
+          $positions[$vertOffset][$horizOffset+$j] = "X";
+        }
+      }
+
+      $horizOffsetWidth = $horizOffset*$width;
+      $vertOffsetHeight = $vertOffset*$height;
+      $shipWidth = $width*$length;
+
+      if($idx == 0){
+
+        return "<rect id = 'ship_{$idx}' x='{$horizOffsetWidth}' y='{$vertOffsetHeight}' height='{$height}' width='{$shipWidth}' fill='{$fill}' stroke='{$stroke}' stroke-width='{$strokeWidth}'></rect>";
+
+      }else{
+
+        $legal = GameController::checkLegal($thisPositions, $positions);
+        if($legal){
+          for($j = 0; $j<$length;$j++){
+            $positions[$vertOffset][$horizOffset+$j] = "X";
+          }
+          //GameController::printPositions($positions);
+          return "<rect id = 'ship_{$idx}' x='{$horizOffsetWidth}' y='{$vertOffsetHeight}' height='{$height}' width='{$shipWidth}' fill='{$fill}' stroke='{$stroke}' stroke-width='{$strokeWidth}'></rect>";
+        }else{
+          return GameController::getLegalPosition($idx, $length, $orientation, $positions);
+        }
+
+      }
+
+    }else if($orientation === "V"){
+
+
+
+      $horizOffset = rand ( 0 , 9 );
+      $vertOffset = rand ( 0 , (9-$length));
+      //print "offsets: "+ $horizOffset .", ".$vertOffset."   ";
+      for($j = 0; $j<$length;$j++){
+        $thisPositions[$vertOffset+$j] = $horizOffset;
+        if($idx == 0){
+          $positions[$vertOffset+$j][$horizOffset] = "X";
+        }
+
+      }
+
+      $horizOffsetWidth = $horizOffset*$width;
+      $vertOffsetHeight = $vertOffset*$height;
+
+      $shipHeight = $height*$length;
+      if($idx == 0){
+
+        return "<rect id = 'ship_{$idx}' x='{$horizOffsetWidth}' y='{$vertOffsetHeight}' height='{$shipHeight}' width='{$width}' fill='{$fill}' stroke='{$stroke}' stroke-width='{$strokeWidth}'></rect>";
+
+      }else{
+
+        $legal = GameController::checkLegal($thisPositions, $positions);
+        if($legal){
+          for($j = 0; $j<$length;$j++){
+            $positions[$vertOffset+$j][$horizOffset] = "X";
+          }
+          //GameController::printPositions($positions);
+          return "<rect id = 'ship_{$idx}' x='{$horizOffsetWidth}' y='{$vertOffsetHeight}' height='{$shipHeight}' width='{$width}' fill='{$fill}' stroke='{$stroke}' stroke-width='{$strokeWidth}'></rect>";
+        }else{
+          return GameController::getLegalPosition($idx, $length, $orientation, $positions);
+        }
+
+
+      }
     }
 
+  }
+
+  public static function printPositions(&$positions){
+    for($k = 0; $k < sizeOf($positions); $k++){
+      foreach($positions[$k] as $key => $val){
+          echo ' ' . $val;
+      }
+      print '<br>';
+    }
+    //print_r($positions);
+  }
+
+  public static function checkLegal($thisPositions, &$positions){
+    $legal = true;
+    foreach($thisPositions as $key => $value){
+      if(isset($positions[$key][$value]) && $positions[$key][$value] === 'X'){
+        $legal = false;
+      }else if(isset($positions[$key][$value+1]) && $positions[$key][$value+1] === 'X'){
+        $legal = false;
+      }else if(isset($positions[$key][$value-1]) && $positions[$key][$value-1] === 'X'){
+        $legal = false;
+      }else if(isset($positions[$key+1][$value]) && $positions[$key+1][$value] === 'X'){
+        $legal = false;
+      }else if(isset($positions[$key+1][$value+1]) && $positions[$key+1][$value+1] === 'X'){
+        $legal = false;
+      }else if(isset($positions[$key+1][$value-1]) && $positions[$key+1][$value-1] === 'X'){
+        $legal = false;
+      }else if(isset($positions[$key-1][$value]) && $positions[$key-1][$value] === 'X'){
+        $legal = false;
+      }else if(isset($positions[$key-1][$value-1]) && $positions[$key-1][$value-1] === 'X'){
+        $legal = false;
+      }else if(isset($positions[$key-1][$value+1]) && $positions[$key-1][$value+1] === 'X'){
+        $legal = false;
+      }
+    }
+    return $legal;
   }
 
 }
