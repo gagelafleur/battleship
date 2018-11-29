@@ -293,7 +293,6 @@ class GameController extends Controller
     $shipLengths = array(2,3,3,4,5);
     shuffle($shipLengths);
 
-    //orientations
     $shipOrientations = array();
 
     for($i = 0; $i<sizeOf($shipLengths);$i++){
@@ -347,7 +346,6 @@ class GameController extends Controller
       $horizOffsetWidth = $horizOffset*$width;
       $vertOffsetHeight = $vertOffset*$height;
       $shipWidth = $width*$length;
-      print_r($thisPositions);
 
       if($idx == 0){
 
@@ -360,7 +358,7 @@ class GameController extends Controller
           for($j = 0; $j<$length;$j++){
             $positions[$vertOffset][$horizOffset+$j] = "X";
           }
-          //GameController::printPositions($positions);
+
           return "<rect id = 'ship_{$idx}' x='{$horizOffsetWidth}' y='{$vertOffsetHeight}' height='{$height}' width='{$shipWidth}' fill='{$fill}' stroke='{$stroke}' stroke-width='{$strokeWidth}'></rect>";
         }else{
           return GameController::getLegalPosition($idx, $length, $orientation, $positions);
@@ -374,7 +372,6 @@ class GameController extends Controller
 
       $horizOffset = rand ( 0 , 9 );
       $vertOffset = rand ( 0 , (9-$length));
-      //print "offsets: "+ $horizOffset .", ".$vertOffset."   ";
       for($j = 0; $j<$length;$j++){
         $thisPositions[$vertOffset+$j] = $horizOffset;
         if($idx == 0){
@@ -382,7 +379,7 @@ class GameController extends Controller
         }
 
       }
-      print_r($thisPositions);
+
       $horizOffsetWidth = $horizOffset*$width;
       $vertOffsetHeight = $vertOffset*$height;
 
@@ -398,7 +395,6 @@ class GameController extends Controller
           for($j = 0; $j<$length;$j++){
             $positions[$vertOffset+$j][$horizOffset] = "X";
           }
-          //GameController::printPositions($positions);
           return "<rect id = 'ship_{$idx}' x='{$horizOffsetWidth}' y='{$vertOffsetHeight}' height='{$shipHeight}' width='{$width}' fill='{$fill}' stroke='{$stroke}' stroke-width='{$strokeWidth}'></rect>";
         }else{
           return GameController::getLegalPosition($idx, $length, $orientation, $positions);
@@ -417,7 +413,6 @@ class GameController extends Controller
       }
       print '<br>';
     }
-    //print_r($positions);
   }
 
   public static function checkLegal($thisPositions, &$positions, $orientation){
