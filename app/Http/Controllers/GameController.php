@@ -288,9 +288,10 @@ class GameController extends Controller
     );
 
 
-    //need 5 ships, 1 - 5
+
 
     $shipLengths = array(2,3,3,4,5);
+    shuffle($shipLengths);
 
     //orientations
     $shipOrientations = array();
@@ -304,26 +305,9 @@ class GameController extends Controller
       }
 
     }
-
-    //print_r($shipOrientations);
-
-    //top-left coordinates for placement... with check for legal placements
+    shuffle($shipOrientations);
 
     $pieces = "";
-
-    /*for($i = 0; $i<10;$i++){
-
-      for($j = 0; $j<10;$j++){
-
-        $horizOffset = $width*$i;
-        $vertOffset = $height*$j;
-
-        $board .= "<rect id = 'opponent_square_{$i}_{$j}' x='{$horizOffset}' y='{$vertOffset}' height='{$height}' width='{$width}' fill='{$fill}' stroke='{$stroke}' stroke-width='{$strokeWidth}'></rect>";
-
-      }
-
-    }*/
-
 
     for($i = 0; $i<sizeOf($shipLengths);$i++){
 
@@ -346,17 +330,15 @@ class GameController extends Controller
     $stroke = "black";
     $strokeWidth = 4;
 
-    print "getLegalPosition";
 
     if($orientation === "H"){
 
       $horizOffset = rand ( 0 , (9-$length) );
       $vertOffset = rand ( 0 , 9 );
 
-      //print "offsets: "+ $horizOffset .", ".$vertOffset."   ";
       $thisPositions = array();
       for($j = 0; $j<$length;$j++){
-        $thisPositions[$vertOffset] = $horizOffset+$j;
+        $thisPositions[$horizOffset+$j] = $vertOffset;
         if($idx == 0){
           $positions[$vertOffset][$horizOffset+$j] = "X";
         }
@@ -365,6 +347,7 @@ class GameController extends Controller
       $horizOffsetWidth = $horizOffset*$width;
       $vertOffsetHeight = $vertOffset*$height;
       $shipWidth = $width*$length;
+      print_r($thisPositions);
 
       if($idx == 0){
 
@@ -372,7 +355,7 @@ class GameController extends Controller
 
       }else{
 
-        $legal = GameController::checkLegal($thisPositions, $positions);
+        $legal = GameController::checkLegal($thisPositions, $positions, $orientation);
         if($legal){
           for($j = 0; $j<$length;$j++){
             $positions[$vertOffset][$horizOffset+$j] = "X";
@@ -399,7 +382,7 @@ class GameController extends Controller
         }
 
       }
-
+      print_r($thisPositions);
       $horizOffsetWidth = $horizOffset*$width;
       $vertOffsetHeight = $vertOffset*$height;
 
@@ -410,7 +393,7 @@ class GameController extends Controller
 
       }else{
 
-        $legal = GameController::checkLegal($thisPositions, $positions);
+        $legal = GameController::checkLegal($thisPositions, $positions, $orientation);
         if($legal){
           for($j = 0; $j<$length;$j++){
             $positions[$vertOffset+$j][$horizOffset] = "X";
@@ -437,9 +420,14 @@ class GameController extends Controller
     //print_r($positions);
   }
 
-  public static function checkLegal($thisPositions, &$positions){
+  public static function checkLegal($thisPositions, &$positions, $orientation){
     $legal = true;
     foreach($thisPositions as $key => $value){
+      if($orientation === "H"){
+        $temp = $key;
+        $key = $value;
+        $value = $temp;
+      }
       if(isset($positions[$key][$value]) && $positions[$key][$value] === 'X'){
         $legal = false;
       }else if(isset($positions[$key][$value+1]) && $positions[$key][$value+1] === 'X'){
