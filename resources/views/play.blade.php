@@ -29,7 +29,7 @@
                     {{ GameController::randomizeBoard() }}
 
 
-                  </svg><br / />
+                  </svg><br />
 
                 </div>
 
@@ -46,12 +46,13 @@
                 </div>
 
                 <div style = "clear:both">
-                  
+
                 </div>
 
                 <div>
                   <form id = "starter" method="POST">
                     <input type="hidden" name="_token" value="{{ csrf_token() }}" />
+                    <input type="hidden" name="board" value="" />
                     <input type="submit" name="Start" value="Start Game" />
                   </form>
                 </div>

@@ -13,6 +13,18 @@ use DB;
 class GameController extends Controller
 {
 
+  public $positions = array(
+    array("O","O","O","O","O","O","O","O","O","O"),
+    array("O","O","O","O","O","O","O","O","O","O"),
+    array("O","O","O","O","O","O","O","O","O","O"),
+    array("O","O","O","O","O","O","O","O","O","O"),
+    array("O","O","O","O","O","O","O","O","O","O"),
+    array("O","O","O","O","O","O","O","O","O","O"),
+    array("O","O","O","O","O","O","O","O","O","O"),
+    array("O","O","O","O","O","O","O","O","O","O"),
+    array("O","O","O","O","O","O","O","O","O","O"),
+    array("O","O","O","O","O","O","O","O","O","O")
+  );
 
   public function __construct()
   {
@@ -261,7 +273,7 @@ class GameController extends Controller
         $horizOffset = $width*$i;
         $vertOffset = $height*$j;
 
-        $board .= "<rect id = 'opponent_square_{$i}_{$j}' x='{$horizOffset}' y='{$vertOffset}' height='{$height}' width='{$width}' fill='{$fill}' stroke='{$stroke}' stroke-width='{$strokeWidth}'></rect>";
+        $board .= "<rect id = 'opponent_square_{$i}_{$j}' data-xcoord='{$i}' data-ycoord='{$j}' x='{$horizOffset}' y='{$vertOffset}' height='{$height}' width='{$width}' fill='{$fill}' stroke='{$stroke}' stroke-width='{$strokeWidth}'></rect>";
 
       }
 
@@ -274,18 +286,7 @@ class GameController extends Controller
 
   public static function randomizeBoard(){
 
-    $positions = array(
-      array("O","O","O","O","O","O","O","O","O","O"),
-      array("O","O","O","O","O","O","O","O","O","O"),
-      array("O","O","O","O","O","O","O","O","O","O"),
-      array("O","O","O","O","O","O","O","O","O","O"),
-      array("O","O","O","O","O","O","O","O","O","O"),
-      array("O","O","O","O","O","O","O","O","O","O"),
-      array("O","O","O","O","O","O","O","O","O","O"),
-      array("O","O","O","O","O","O","O","O","O","O"),
-      array("O","O","O","O","O","O","O","O","O","O"),
-      array("O","O","O","O","O","O","O","O","O","O")
-    );
+
 
 
 
@@ -325,7 +326,7 @@ class GameController extends Controller
 
     $height = 40;
     $width = 40;
-    $fill = "none";
+    $fill = "grey";
     $stroke = "black";
     $strokeWidth = 4;
 
@@ -349,7 +350,7 @@ class GameController extends Controller
 
       if($idx == 0){
 
-        return "<rect id = 'ship_{$idx}' x='{$horizOffsetWidth}' y='{$vertOffsetHeight}' height='{$height}' width='{$shipWidth}' fill='{$fill}' stroke='{$stroke}' stroke-width='{$strokeWidth}'></rect>";
+        return "<rect id = 'ship_{$idx}' class = 'gamepiece' data-xcoord='{$horizOffset}' data-ycoord='{$vertOffset}' data-orientation='{$orientation}' data-length='{$length}' x='{$horizOffsetWidth}' y='{$vertOffsetHeight}' height='{$height}' width='{$shipWidth}' fill='{$fill}' stroke='{$stroke}' stroke-width='{$strokeWidth}'></rect>";
 
       }else{
 
@@ -359,7 +360,7 @@ class GameController extends Controller
             $positions[$vertOffset][$horizOffset+$j] = "X";
           }
 
-          return "<rect id = 'ship_{$idx}' x='{$horizOffsetWidth}' y='{$vertOffsetHeight}' height='{$height}' width='{$shipWidth}' fill='{$fill}' stroke='{$stroke}' stroke-width='{$strokeWidth}'></rect>";
+          return "<rect id = 'ship_{$idx}' class = 'gamepiece' data-xcoord='{$horizOffset}' data-ycoord='{$vertOffset}' data-orientation='{$orientation}' data-length='{$length}' x='{$horizOffsetWidth}' y='{$vertOffsetHeight}' height='{$height}' width='{$shipWidth}' fill='{$fill}' stroke='{$stroke}' stroke-width='{$strokeWidth}'></rect>";
         }else{
           return GameController::getLegalPosition($idx, $length, $orientation, $positions);
         }
@@ -386,7 +387,7 @@ class GameController extends Controller
       $shipHeight = $height*$length;
       if($idx == 0){
 
-        return "<rect id = 'ship_{$idx}' x='{$horizOffsetWidth}' y='{$vertOffsetHeight}' height='{$shipHeight}' width='{$width}' fill='{$fill}' stroke='{$stroke}' stroke-width='{$strokeWidth}'></rect>";
+        return "<rect id = 'ship_{$idx}' class = 'gamepiece' data-xcoord='{$horizOffset}' data-ycoord='{$vertOffset}' data-orientation='{$orientation}' data-length='{$length}' x='{$horizOffsetWidth}' y='{$vertOffsetHeight}' height='{$shipHeight}' width='{$width}' fill='{$fill}' stroke='{$stroke}' stroke-width='{$strokeWidth}'></rect>";
 
       }else{
 
@@ -395,7 +396,7 @@ class GameController extends Controller
           for($j = 0; $j<$length;$j++){
             $positions[$vertOffset+$j][$horizOffset] = "X";
           }
-          return "<rect id = 'ship_{$idx}' x='{$horizOffsetWidth}' y='{$vertOffsetHeight}' height='{$shipHeight}' width='{$width}' fill='{$fill}' stroke='{$stroke}' stroke-width='{$strokeWidth}'></rect>";
+          return "<rect id = 'ship_{$idx}' class = 'gamepiece' data-xcoord='{$horizOffset}' data-ycoord='{$vertOffset}' data-orientation='{$orientation}' data-length='{$length}' x='{$horizOffsetWidth}' y='{$vertOffsetHeight}' height='{$shipHeight}' width='{$width}' fill='{$fill}' stroke='{$stroke}' stroke-width='{$strokeWidth}'></rect>";
         }else{
           return GameController::getLegalPosition($idx, $length, $orientation, $positions);
         }

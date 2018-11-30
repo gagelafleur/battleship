@@ -4,7 +4,8 @@
     var game = undefined,
         chatPoller = 0,
         gamePoller = 0,
-        gameCleanedUp = false;
+        gameCleanedUp = false,
+        board = [];
 
     function abandon(){
       if(typeof game != 'undefined' && game.status === "PLAYING"){
@@ -34,10 +35,59 @@
       abandon();
     });
 
+    $(window).on('load', function(){
+      updateBoardArray();
+    });
+
+    $(".opponent-board rect").on('click', function(){
+      //get id
+      console.log($(this).data('xcoord'), $(this).data('ycoord'));
+
+
+      //quick call to server to check if legal and if ship is on it
+
+
+    });
+
+    function updateBoardArray(){
+
+      board = [
+              ["0","0","0","0","0","0","0","0","0","0"],
+              ["0","0","0","0","0","0","0","0","0","0"],
+              ["0","0","0","0","0","0","0","0","0","0"],
+              ["0","0","0","0","0","0","0","0","0","0"],
+              ["0","0","0","0","0","0","0","0","0","0"],
+              ["0","0","0","0","0","0","0","0","0","0"],
+              ["0","0","0","0","0","0","0","0","0","0"],
+              ["0","0","0","0","0","0","0","0","0","0"],
+              ["0","0","0","0","0","0","0","0","0","0"],
+              ["0","0","0","0","0","0","0","0","0","0"],
+              ];
+
+      $(".gamepiece").each(function(){
+          var x = $(this).data("xcoord");
+          var y = $(this).data("ycoord");
+          var orientation = $(this).data("orientation");
+          var length = $(this).data("length");
+          console.log(x,y,orientation, length);
+          for(var i=0;i<length;i++){
+            if(orientation === "H"){
+              board[y][x+i] = "X";
+            }else if(orientation === "V"){
+              board[y+i][x] = "X";
+            }
+          }
+
+      });
+      //console.log(board);
+      $("#starter input[name='board']").val(JSON.stringify(board));
+    }
+
 
     $("#starter").on("submit",function(e){
       e.preventDefault();
       console.log($( this ).serialize());
+      //send board data with this call.
 
       $.ajax({
         type: "POST",
@@ -52,6 +102,10 @@
           console.log(game);
           $(this).hide();
           $( "input[name*='gameId']" ).val(game.id);
+
+
+
+
           if(typeof game != 'undefined'){
             chatPoller = setInterval(pollChat, 2500);
             gamePoller = setInterval(pollGame, 5000);
