@@ -16,6 +16,7 @@
     <title>{{ config('app.name', 'Laravel') }}</title>
 
     <!-- Styles -->
+    <link href="{{ asset('css/jquery.growl.css') }}" rel="stylesheet">
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link href="{{ asset('css/game.css') }}" rel="stylesheet">
 </head>
@@ -82,6 +83,7 @@
 
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}"></script>
+    <script src="{{ asset('js/jquery.growl.js') }}"></script>
     <script src="{{ asset('js/game.js') }}"></script>
     <script>
       $.ajaxSetup({
