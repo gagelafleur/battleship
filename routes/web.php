@@ -60,6 +60,12 @@ Route::group(['middleware' => 'web'], function () {
 
   ]);
 
+  /*Route::post('/randomize', [
+
+      'uses' => 'GameController@randomizeBoardAjax'
+
+  ]);*/
+
 
 
 });

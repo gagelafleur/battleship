@@ -5,7 +5,8 @@
         chatPoller = 0,
         gamePoller = 0,
         gameCleanedUp = false,
-        board = [];
+        board = [],
+        moverId, myX, myY;
 
     function abandon(){
       if(typeof game != 'undefined' && game.status === "PLAYING"){
@@ -37,6 +38,8 @@
 
     $(window).on('load', function(){
       updateBoardArray();
+      document.getElementsByTagName("svg")[0].addEventListener( "mousemove", moveChecker, "false");
+      document.getElementsByTagName("svg")[0].addEventListener( "mouseup", releaseMouse, "false");
     });
 
     $(".opponent-board rect").on('click', function(){
@@ -48,6 +51,29 @@
 
 
     });
+
+    /*$(".randomizor a").on('click', function(e){
+      e.preventDefault();
+      $( ".board svg" ).remove( ".gamepiece" );
+
+      $.ajax({
+        type: "POST",
+        async: true,
+        cache: false,
+        url: "/759/battleship/public/randomize",
+        data: $( this ).serialize(),
+        dataType: "json",
+        success: function(data){
+
+          $(".board svg").append(data);
+
+        },
+        failure: function() {
+
+        },
+      });
+
+    });*/
 
     function updateBoardArray(){
 
@@ -107,11 +133,12 @@
 
 
           if(typeof game != 'undefined'){
+            $.growl({ message: "Waiting for and opponent" });
             chatPoller = setInterval(pollChat, 2500);
             gamePoller = setInterval(pollGame, 5000);
           }
 
-
+          $(".debug").text("<pre>"+game.array+"</pre>");
 
         },
         failure: function() {
@@ -203,6 +230,86 @@
 
           },
         });
+      }
+    }
+
+    $(".gamepiece").on('mousedown', function(){
+
+      console.log($(this).attr("id"));
+      setMove($(this).attr("id"));
+
+    });
+
+
+    function setMove(pId){
+      moverId = pId;
+      console.log(document.getElementById(moverId).getAttribute("x"));
+      myX = parseInt(document.getElementById(moverId).getAttribute("x"));
+      myY = parseInt(document.getElementById(moverId).getAttribute("y"));
+      console.log("in setMove(): ", moverId, myX, myY);
+
+    }
+
+    //getting called for every mouse movement
+    //only move checker if it's been clicked on
+    function moveChecker(evt){
+      //console.log(evt.clientX, evt.clientY);
+      if(moverId){
+        let checkerEle = document.getElementById(moverId);
+
+        var b = $( ".board svg" );
+        var offset = b.offset();
+        console.log((evt.clientX-offset.left) , (evt.clientY-offset.top));
+
+        //move checker on the SVG stage to mouse location
+        checkerEle.setAttribute("x", evt.clientX-offset.left);
+        checkerEle.setAttribute("y", evt.clientY-offset.top);
+      }
+
+    }
+
+    function releaseMouse(){
+
+      if(moverId){
+
+        let curX = parseInt(document.getElementById(moverId).getAttribute("x"));
+        let curY = parseInt(document.getElementById(moverId).getAttribute("y"));
+
+
+        //only stop moving checker if we hit something
+        if(checkHit(curX, curY)){
+
+          moverId = undefined;
+
+        }
+
+
+
+      }
+
+    }
+
+    function checkHit(curX, curY){
+      for(let i=0;i<10;i++){
+        for(let j=0;j<10;j++){
+          let dropTarget = document.getElementById(`square_${i}_${j}`).getBBox();
+          //console.log(dropTarget);
+
+          if(curX > dropTarget.x &&
+             curX < dropTarget.x+dropTarget.width &&
+             curY > dropTarget.y &&
+             curY < dropTarget.y+dropTarget.height ){
+
+               if(moverId){
+                 let checkerEle = document.getElementById(moverId);
+                 checkerEle.setAttribute("x", dropTarget.x);
+                 checkerEle.setAttribute("y", dropTarget.y);
+               }   
+
+            return true;
+
+          }
+        }
       }
     }
 

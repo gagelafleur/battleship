@@ -46,7 +46,6 @@
                 </div>
 
                 <div style = "clear:both">
-
                 </div>
 
                 <div>
@@ -76,6 +75,10 @@
                     <input type="hidden" name="gameId" value="" />
                     <input type="submit" name="Submit" value="Send" />
                   </form>
+                </div>
+
+                <div class = "debug">
+
                 </div>
 
             </div>

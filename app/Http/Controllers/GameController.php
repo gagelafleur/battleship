@@ -47,14 +47,22 @@ class GameController extends Controller
       return view('play')->with('user', $user); ;
   }
 
-  public function startGame()
+  public function startGame(Request $request)
   {
+
+    $this->validate($request, [
+
+      'board' => 'required|json',
+
+    ]);
+
     $game = $this->findGame();
     $currentPlayer = Auth::User();
 
     if(count($game) > 0 && $game->player1Id !== $currentPlayer->id){
 
       $game->player2Id = $currentPlayer->id;
+      $game->player2Board = $request['board'];
       $game->status = "PLAYING";
       $game->save();
 
@@ -65,7 +73,11 @@ class GameController extends Controller
       $game = new Game();
       $game->player1Id = $currentPlayer->id;
       $game->player2Id = NULL;
+      $game->player1Board = $request['board'];
+      $game->playerTurn = $currentPlayer->id;
       $game->save();
+      $board = json_decode($request['board']);
+      $game->array = print_r($board, true);
 
     }
 
@@ -286,10 +298,35 @@ class GameController extends Controller
 
   public static function randomizeBoard(){
 
+    $shipLengths = array(2,3,3,4,5);
+    shuffle($shipLengths);
 
+    $shipOrientations = array();
 
+    for($i = 0; $i<sizeOf($shipLengths);$i++){
 
+      if(rand(0,1) == 0){
+        $shipOrientations[] = "H";
+      }else{
+        $shipOrientations[] = "V";
+      }
 
+    }
+    shuffle($shipOrientations);
+
+    $pieces = "";
+
+    for($i = 0; $i<sizeOf($shipLengths);$i++){
+
+      $pieces .= GameController::getLegalPosition($i, $shipLengths[$i], $shipOrientations[$i], $positions);
+
+    }
+
+    print $pieces;
+
+  }
+
+  /*public static function randomizeBoardAjax(){
 
     $shipLengths = array(2,3,3,4,5);
     shuffle($shipLengths);
@@ -315,12 +352,10 @@ class GameController extends Controller
 
     }
 
+    //print $pieces;
+    return response($pieces)->header('Content-Type', 'text/plain');
 
-    print $pieces;
-
-
-
-  }
+  }*/
 
   public static function getLegalPosition($idx, $length, $orientation, &$positions){
 
