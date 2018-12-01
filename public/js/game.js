@@ -6,7 +6,7 @@
         gamePoller = 0,
         gameCleanedUp = false,
         board = [],
-        moverId, myX, myY;
+        moverId, myX, myY, origX, origY;
 
     function abandon(){
       if(typeof game != 'undefined' && game.status === "PLAYING"){
@@ -95,7 +95,7 @@
           var y = $(this).data("ycoord");
           var orientation = $(this).data("orientation");
           var length = $(this).data("length");
-          console.log(x,y,orientation, length);
+          //console.log(x,y,orientation, length);
           for(var i=0;i<length;i++){
             if(orientation === "H"){
               board[y][x+i] = "X";
@@ -105,7 +105,7 @@
           }
 
       });
-      //console.log(board);
+      console.log(board);
       $("#starter input[name='board']").val(JSON.stringify(board));
     }
 
@@ -248,6 +248,22 @@
       myY = parseInt(document.getElementById(moverId).getAttribute("y"));
       console.log("in setMove(): ", moverId, myX, myY);
 
+      //remove from board array
+      var moverX = $("#"+moverId).data("xcoord");
+      var moverY = $("#"+moverId).data("ycoord");
+      var moverLength = $("#"+moverId).data("length");
+      var moverOrient = $("#"+moverId).data("orientation");
+      console.log($("#"+moverId).data("xcoord"),$("#"+moverId).data("ycoord"),$("#"+moverId).data("orientation"),$("#"+moverId).data("length"));
+      for(var i=0;i<moverLength;i++){
+        if(moverOrient === "H"){
+          board[moverY][moverX+i] = "0";
+        }else if(moverOrient === "V"){
+          board[moverY+i][moverX] = "0";
+        }
+      }
+      origX = moverX;
+      origY = moverY;
+      console.log(board);
     }
 
     //getting called for every mouse movement
@@ -258,12 +274,12 @@
         let checkerEle = document.getElementById(moverId);
 
         var b = $( ".board svg" );
-        var offset = b.offset();
-        console.log((evt.clientX-offset.left) , (evt.clientY-offset.top));
+        var position = b.position();
+        //console.log((evt.clientX-offset.left) , (evt.clientY-offset.top));
 
         //move checker on the SVG stage to mouse location
-        checkerEle.setAttribute("x", evt.clientX-offset.left);
-        checkerEle.setAttribute("y", evt.clientY-offset.top);
+        checkerEle.setAttribute("x", evt.clientX-position.left);
+        checkerEle.setAttribute("y", evt.clientY-position.top);
       }
 
     }
@@ -279,7 +295,11 @@
         //only stop moving checker if we hit something
         if(checkHit(curX, curY)){
 
+          updateCoords(moverId);
+          updateBoardArray();
           moverId = undefined;
+          origX = undefined;
+          origY = undefined;
 
         }
 
@@ -300,17 +320,38 @@
              curY > dropTarget.y &&
              curY < dropTarget.y+dropTarget.height ){
 
-               if(moverId){
+               //console.log(`square_${i}_${j}`);
+
+
+
+               if(checkLegal() && moverId){
                  let checkerEle = document.getElementById(moverId);
                  checkerEle.setAttribute("x", dropTarget.x);
                  checkerEle.setAttribute("y", dropTarget.y);
-               }   
+               }else{
+
+                 //return to original position
+
+
+               }
 
             return true;
 
           }
         }
       }
+    }
+
+    function updateCoords(piece){
+      var ship = $("#"+piece);
+      console.log("#"+piece, $("#"+piece).data("xcoord"), $("#"+piece).data("ycoord"));
+      $("#"+piece).attr("data-xcoord", parseInt($("#"+piece).attr('x')/40));
+      $("#"+piece).attr("data-ycoord", parseInt($("#"+piece).attr('y')/40));
+      //document.getElementById('piece').setAttributeNS
+    }
+
+    function checkLegal(){
+      return true;
     }
 
 })(jQuery);
