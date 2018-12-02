@@ -261,8 +261,8 @@
           board[moverY+i][moverX] = "0";
         }
       }
-      origX = moverX;
-      origY = moverY;
+      origX = moverX*40;
+      origY = moverY*40;
       console.log(board);
     }
 
@@ -291,12 +291,12 @@
         let curX = parseInt(document.getElementById(moverId).getAttribute("x"));
         let curY = parseInt(document.getElementById(moverId).getAttribute("y"));
 
-
+        updateCoords(moverId);
         //only stop moving checker if we hit something
         if(checkHit(curX, curY)){
 
-          updateCoords(moverId);
-          updateBoardArray();
+
+
           moverId = undefined;
           origX = undefined;
           origY = undefined;
@@ -324,16 +324,24 @@
 
 
 
-               if(checkLegal() && moverId){
+               if(moverId && checkLegal(moverId)){
+
                  let checkerEle = document.getElementById(moverId);
                  checkerEle.setAttribute("x", dropTarget.x);
                  checkerEle.setAttribute("y", dropTarget.y);
-               }else{
+               }else if(moverId){
 
                  //return to original position
+                 let checkerEle = document.getElementById(moverId);
+                 checkerEle.setAttribute("x", origX);
+                 checkerEle.setAttribute("y", origY);
+                 console.log(origX,origY);
+                 updateCoords(moverId);
 
 
                }
+
+               updateBoardArray();
 
             return true;
 
@@ -347,11 +355,61 @@
       console.log("#"+piece, $("#"+piece).data("xcoord"), $("#"+piece).data("ycoord"));
       $("#"+piece).attr("data-xcoord", parseInt($("#"+piece).attr('x')/40));
       $("#"+piece).attr("data-ycoord", parseInt($("#"+piece).attr('y')/40));
+      $("#"+piece).data("xcoord", parseInt($("#"+piece).attr('x')/40));
+      $("#"+piece).data("ycoord", parseInt($("#"+piece).attr('y')/40));
       //document.getElementById('piece').setAttributeNS
     }
 
-    function checkLegal(){
-      return true;
+    function checkLegal(piece){
+      //needs debugging and some fixing - dropping pieces may alson need fixing
+      var legal = true;
+      var checkX = $("#"+piece).data("xcoord");
+      var checkY = $("#"+piece).data("ycoord");
+      var checkOrient = $("#"+piece).data("orientation");
+      var checkLength = $("#"+piece).data("length");
+      console.log("checkLegal")
+
+      if(checkOrient === "H" && (checkX+checkLength) > 9){
+        console.log("offBoard");
+        return false;
+      }else
+      if(checkOrient === "V" && (checkY+checkLength) > 9){
+        console.log("offBoard");
+        return false;
+      }
+
+      for(var i=0;i<checkLength;i++){
+        /*if(checkOrient === "H"){
+          var temp = checkY;
+          checkY = checkX;
+          checkX = temp;
+        }*/
+
+
+        if(board[checkY][checkX] === 'X'){
+          legal = false;
+        }else if(board[checkY][checkX+1] === 'X'){
+          legal = false;
+        }else if(board[checkY][checkX-1] === 'X'){
+          legal = false;
+        }else if(board[checkY+1][checkX] === 'X'){
+          legal = false;
+        }else if(board[checkY+1][checkX+1] === 'X'){
+          legal = false;
+        }else if(board[checkY+1][checkX-1] === 'X'){
+          legal = false;
+        }else if(board[checkY-1][checkX] === 'X'){
+          legal = false;
+        }else if(board[checkY-1][checkX-1] === 'X'){
+          legal = false;
+        }else if(board[checkY-1][checkX+1] === 'X'){
+          legal = false;
+        }
+
+
+      }
+
+      return legal;
     }
 
 })(jQuery);
