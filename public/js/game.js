@@ -254,16 +254,20 @@
         let myHeight = activePiece.getAttribute("height");
 
 
+
+
         activePiece.setAttribute("width", myHeight);
         activePiece.setAttribute("height", myWidth);
 
         if($("#"+moverId).attr("data-orientation") === "H"){
           $("#"+moverId).attr("data-orientation", "V");
-          $("#"+moverId).data("data-orientation", "V");
+          $("#"+moverId).data("orientation", "V");
         }else if($("#"+moverId).attr("data-orientation") === "V"){
           $("#"+moverId).attr("data-orientation", "H");
-          $("#"+moverId).data("data-orientation", "H");
+          $("#"+moverId).data("orientation", "H");
         }
+
+
 
         updateCoords(moverId);
         console.log("rotator", activePiece.getAttribute("x"), activePiece.getAttribute("y"), $("#"+moverId).attr("data-orientation"));
@@ -387,7 +391,7 @@
                  checkerEle.setAttribute("width", origWidth);
                  checkerEle.setAttribute("height", origHeight);
                  $("#"+moverId).attr("data-orientation", origOrient);
-                 $("#"+moverId).data("data-orientation", origOrient);
+                 $("#"+moverId).data("orientation", origOrient);
                  console.log(origX,origY);
                  updateCoords(moverId);
 
@@ -405,6 +409,14 @@
 
     function updateCoords(piece){
       var ship = $("#"+piece);
+
+      /*if($("#"+piece).attr("height") < $("#"+piece).attr("width") && $("#"+moverId).data("orientation") == "V"){
+        $("#"+moverId).attr("data-orientation", "H");
+        $("#"+moverId).data("orientation", "H");
+      }else if($("#"+piece).attr("height") > $("#"+piece).attr("width") && $("#"+moverId).data("orientation") == "H"){
+        $("#"+moverId).attr("data-orientation", "V");
+        $("#"+moverId).data("orientation", "V");
+      }*/
 
       $("#"+piece).attr("data-xcoord", parseInt($("#"+piece).attr('x')/40));
       $("#"+piece).attr("data-ycoord", parseInt($("#"+piece).attr('y')/40));
