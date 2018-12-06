@@ -239,6 +239,44 @@ class GameController extends Controller
 
   }
 
+  public function checkOpponentHit(Request $request)
+  {
+
+    $this->validate($request, [
+
+      'id' => 'required|numeric',
+      'y' => 'required|numeric',
+      'x' => 'required|numeric',
+
+
+    ]);
+
+    $game = Game::where('id', $request['id'])->first();
+    $user = Auth::user();
+
+    $retval = "";
+
+    if($game->player1Id === $user->id){
+
+      $opponentBoard = json_decode($game->player2Board, true);
+      $retval = $opponentBoard[ $request['y'] ][ $request['x'] ];
+
+    }else if($game->player2Id === $user->id){
+
+      $opponentBoard = json_decode($game->player1Board, true);
+      $retval = $opponentBoard[ $request['y'] ][ $request['x'] ];
+
+    }
+
+
+
+    return response()->json([
+        'success'  => true,
+        'data' => $retval
+    ]);
+
+  }
+
 
   public static function printOwnBoard(){
 

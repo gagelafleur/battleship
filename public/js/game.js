@@ -2,6 +2,7 @@
     'use strict';
 
     var game = undefined,
+        currentStatus = "WAITING",
         chatPoller = 0,
         gamePoller = 0,
         gameCleanedUp = false,
@@ -221,6 +222,54 @@
               window.alert('Your opponent has forfeited the match.');
               window.location.href='http://gagelafleur.com/759/battleship/public/';
             }
+            if(currentStatus === "WAITING"  && game.status === "PLAYING"){
+              //remove ability to move pieces on own board
+              console.log("game started. making board read only.");
+              document.getElementsByTagName("svg")[0].removeEventListener( "mousemove", moveChecker, "false");
+              document.getElementsByTagName("svg")[0].removeEventListener( "mouseup", releaseMouse, "false");
+
+              //set opponent board event listener
+              var opponentSquares = document.getElementsByTagName("svg")[1].getElementsByTagName("rect");
+
+              for (var i = 0; i < opponentSquares.length; i++) {
+                opponentSquares[i].addEventListener( "mouseup", fire, "false");
+              }
+
+
+            }
+            currentStatus = game.status;
+          },
+          failure: function() {
+
+          },
+        });
+      }
+    }
+
+
+    function fire(e){
+      console.log(e.target.id, game.playerTurn);
+
+      var xShot = $("#"+e.target.id).attr("data-xcoord");
+      var yShot = $("#"+e.target.id).attr("data-ycoord");
+
+      var shot = {
+        "id"  : game.id,
+        "y"   : yShot,
+        "x"   : xShot,
+
+      }
+
+      if(typeof game != 'undefined' && game.status === "PLAYING"){
+        $.ajax({
+          type: "POST",
+          async: true,
+          cache: false,
+          url: "/759/battleship/public/checkOpponentHit",
+          data: shot,
+          dataType: "json",
+          success: function(data){
+            console.log("SHOT", data);
           },
           failure: function() {
 
@@ -233,10 +282,7 @@
 
       console.log($(this).attr("id"));
       setMove($(this).attr("id"));
-      document.addEventListener('keypress', (event) => {
-        const keyName = event.key;
-        alert('keypress event\n\n' + 'key: ' + keyName);
-      });
+
 
     });
 
@@ -301,7 +347,7 @@
       origHeight = document.getElementById(moverId).getAttribute("height");
       origOrient = moverOrient;
 
-      document.addEventListener("keydown", rotator, "true");
+      document.addEventListener("keydown", rotator, "false");
 
       console.log(board);
     }
@@ -356,7 +402,7 @@
           origHeight = undefined;
           origOrient = undefined;
 
-          document.removeEventListener("keydown", rotator, "true");
+          document.removeEventListener("keydown", rotator, "false");
 
         }
 
