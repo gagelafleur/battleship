@@ -130,7 +130,7 @@
 
 
           if(typeof game != 'undefined'){
-            $.growl({ message: "Waiting for and opponent" });
+            $.growl.notice({ message: "Waiting for and opponent" });
             chatPoller = setInterval(pollChat, 2500);
             gamePoller = setInterval(pollGame, 5000);
           }
@@ -246,6 +246,12 @@
       }
     }
 
+    function pollBoard(){
+
+
+
+    }
+
 
     function fire(e){
       console.log(e.target.id, game.playerTurn);
@@ -270,6 +276,21 @@
           dataType: "json",
           success: function(data){
             console.log("SHOT", data);
+
+            if(!data.success){
+              $.growl.error({ message: data.message });
+            }
+
+            if(data.success && data.shot === "X"){
+              $("#"+e.target.id).attr("fill", "red");
+              document.getElementById(e.target.id).removeEventListener( "mouseup", fire, "false");
+              $.growl.notice({ message: "Hit at: "+xShot+", "+yShot });
+            }else if(data.success && data.shot === "0"){
+              $("#"+e.target.id).attr("fill", "grey");
+              document.getElementById(e.target.id).removeEventListener( "mouseup", fire, "false");
+              $.growl.warning({ message: "Miss at: "+xShot+", "+yShot });
+            }
+
           },
           failure: function() {
 

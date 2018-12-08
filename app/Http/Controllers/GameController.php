@@ -254,27 +254,88 @@ class GameController extends Controller
     $game = Game::where('id', $request['id'])->first();
     $user = Auth::user();
 
+    if($game->playerTurn !== $user->id){
+      return response()->json([
+          'success'  => false,
+          'message'  => 'Not your turn.',
+      ]);
+    }
+
     $retval = "";
+    $legal = true;
 
     if($game->player1Id === $user->id){
 
       $opponentBoard = json_decode($game->player2Board, true);
       $retval = $opponentBoard[ $request['y'] ][ $request['x'] ];
 
+      if($retval === "X"){
+        $opponentBoard[ $request['y'] ][ $request['x'] ] = "1";
+      }else if($retval === "0"){
+        $opponentBoard[ $request['y'] ][ $request['x'] ] = "!";
+      }else{
+        $legal = false;
+      }
+
+      if($legal){
+        $game->player2Board = json_encode($opponentBoard);
+        $game->playerTurn = $game->player2Id;
+        $game->save();
+      }
+
+
+
     }else if($game->player2Id === $user->id){
 
       $opponentBoard = json_decode($game->player1Board, true);
       $retval = $opponentBoard[ $request['y'] ][ $request['x'] ];
 
+      if($retval === "X"){
+        $opponentBoard[ $request['y'] ][ $request['x'] ] = "1";
+      }else if($retval === "0"){
+        $opponentBoard[ $request['y'] ][ $request['x'] ] = "!";
+      }else{
+        $legal = false;
+      }
+
+      if($legal){
+        $game->player1Board = json_encode($opponentBoard);
+        $game->playerTurn = $game->player1Id;
+        $game->save();
+      }
+
     }
 
+
+    $opponentHits = $this->countHits($opponentBoard);
+
+    if($opponentHits == 17){
+      $game->playerTurn = null;
+      $game->winner = $user->id;
+      $game->status = "FINISHED";
+      $game->save();
+    }
 
 
     return response()->json([
         'success'  => true,
-        'data' => $retval
+        'shot' => $retval,
+        'hits' => $opponentHits,
     ]);
 
+  }
+
+  public function countHits($checkBoard){
+    $count = 0;
+    $hitMarker = "1";
+    foreach($checkBoard as $row){
+      foreach($row as $square){
+        if($square === $hitMarker){
+          $count++;
+        }
+      }
+    }
+    return $count;
   }
 
 
