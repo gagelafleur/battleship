@@ -5,6 +5,7 @@
         currentStatus = "WAITING",
         chatPoller = 0,
         gamePoller = 0,
+        boardPoller = 0,
         gameCleanedUp = false,
         board = [],
         moverId, myX, myY, origX, origY, origWidth, origHeight, origOrient;
@@ -130,12 +131,12 @@
 
 
           if(typeof game != 'undefined'){
-            $.growl.notice({ message: "Waiting for and opponent" });
+            $.growl.notice({ message: "Waiting for an opponent" });
             chatPoller = setInterval(pollChat, 2500);
             gamePoller = setInterval(pollGame, 5000);
           }
 
-          $(".debug").text("<pre>"+game.array+"</pre>");
+          //$(".debug").text("<pre>"+game.array+"</pre>");
 
         },
         failure: function() {
@@ -235,7 +236,11 @@
                 opponentSquares[i].addEventListener( "mouseup", fire, "false");
               }
 
+              boardPoller = setInterval(pollBoard, 2500);
 
+
+            }if(currentStatus === "PLAYING"  && game.status === "FINISHED"){
+              clearInterval(boardPoller);
             }
             currentStatus = game.status;
           },
@@ -247,9 +252,73 @@
     }
 
     function pollBoard(){
+      if(typeof game != 'undefined'){
+        $.ajax({
+          type: "POST",
+          async: true,
+          cache: false,
+          url: "/759/battleship/public/getGameUpdates",
+          data: game,
+          dataType: "json",
+          success: function(data){
+            //console.log( JSON.stringify(data.board) );
+            //game = data.data;
+            var serverBoard = JSON.parse(data.board)
+            //console.log(compareBoards(board, serverBoard));
+            //console.log(board);
+            //console.log(serverBoard);
+
+            if(!compareBoards(board, serverBoard)){
+              board = serverBoard;
+              updateBoardHits();
+            }
 
 
+          },
+          failure: function() {
 
+          },
+        });
+      }
+
+
+    }
+
+    function updateBoardHits(){
+
+      $('.hit-square').remove();
+      $('.miss-square').remove();
+
+      for(var i = 0; i < board.length; i++) {
+        for(var j = 0; j < board[i].length; j++) {
+          if(board[i][j] === "1"){
+
+            var svg = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+            svg.setAttribute('class', 'hit-square');
+            svg.setAttribute('width', '40');
+            svg.setAttribute('height', '40');
+            svg.setAttribute('fill', 'red');
+            svg.setAttribute('fill-opacity', '0.5');
+            svg.setAttribute('x', parseInt(40*j));
+            svg.setAttribute('y', parseInt(40*i));
+            svg.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:xlink", "http://www.w3.org/1999/xlink");
+            document.getElementsByTagName("svg")[0].appendChild(svg);
+
+          }else if(board[i][j] === "!"){
+
+            var svg = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+            svg.setAttribute('class', 'miss-square');
+            svg.setAttribute('width', '40');
+            svg.setAttribute('height', '40');
+            svg.setAttribute('fill', 'blue');
+            svg.setAttribute('x', parseInt(40*j));
+            svg.setAttribute('y', parseInt(40*i));
+            svg.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:xlink", "http://www.w3.org/1999/xlink");
+            document.getElementsByTagName("svg")[0].appendChild(svg);
+
+          }
+        }
+      }
     }
 
 
@@ -558,6 +627,23 @@
       }
 
 
+    }
+
+    function compareBoards(arr1, arr2) {
+      if(arr1.length !== arr2.length){
+        return false;
+      }
+      console.log(arr1[0].length, arr2[0].length);
+
+      for(var i = 0; i < arr1.length; i++) {
+        for(var j = 0; j < arr1[i].length; j++) {
+          if(arr1[i][j] !== arr2[i][j]){
+            return false;
+          }
+        }
+      }
+
+      return true;
     }
 
 })(jQuery);

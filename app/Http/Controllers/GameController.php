@@ -239,6 +239,31 @@ class GameController extends Controller
 
   }
 
+  public function getGameUpdates(Request $request){
+    $this->validate($request, [
+
+      'id' => 'required|numeric',
+
+    ]);
+
+    $game = Game::where('id', $request['id'])->first();
+    $user = Auth::user();
+
+    if($game->player1Id === $user->id){
+
+      $playerBoard = $game->player1Board;
+
+    }else if($game->player2Id === $user->id){
+      $playerBoard = $game->player2Board;
+    }
+
+    return response()->json([
+        'success'  => true,
+        'board' => $playerBoard,
+    ]);
+
+  }
+
   public function checkOpponentHit(Request $request)
   {
 

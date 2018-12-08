@@ -60,6 +60,12 @@ Route::group(['middleware' => 'web'], function () {
 
   ]);
 
+  Route::post('/getGameUpdates', [
+
+      'uses' => 'GameController@getGameUpdates'
+
+  ]);
+
   Route::post('/checkOpponentHit', [
 
       'uses' => 'GameController@checkOpponentHit'
