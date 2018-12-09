@@ -264,6 +264,38 @@ class GameController extends Controller
 
   }
 
+  public function checkWinner(Request $request){
+    $this->validate($request, [
+
+      'id' => 'required|numeric',
+
+    ]);
+
+    $game = Game::where('id', $request['id'])->first();
+    $user = Auth::user();
+
+    if($game->winner === $user->id){
+
+      return response()->json([
+          'success'  => true,
+          'message' => "You've won the game!",
+          'winner' => true,
+      ]);
+
+    }else if($game->winner !== $user->id && $game->winner != NULL){
+      return response()->json([
+          'success'  => true,
+          'message' => "You lost. Better luck next time.",
+          'winner' => false,
+      ]);
+    }
+
+    return response()->json([
+        'success'  => false,
+    ]);
+
+  }
+
   public function checkOpponentHit(Request $request)
   {
 

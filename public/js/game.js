@@ -243,8 +243,35 @@
 
             }if(currentStatus === "PLAYING"  && game.status === "FINISHED"){
               clearInterval(boardPoller);
+              checkWinner();
             }
             currentStatus = game.status;
+          },
+          failure: function() {
+
+          },
+        });
+      }
+    }
+
+
+    function checkWinner(){
+      if(typeof game != 'undefined'){
+        $.ajax({
+          type: "POST",
+          async: true,
+          cache: false,
+          url: baseurl+"checkWinner",
+          data: game,
+          dataType: "json",
+          success: function(data){
+            console.log(data);
+            if(data.success && data.winner){
+              $.growl.notice({ title:"Winner!", message: data.message });
+            }else if(data.success && !data.winner){
+              $.growl.notice({ title:"Sorry :(", message: data.message });
+            }
+
           },
           failure: function() {
 

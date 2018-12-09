@@ -20,6 +20,7 @@
                 <div class = "board">
                   <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="400px" height="400px">
 
+                    <!-- ship graphics from https://graphicriver.net/item/top-aerial-view-boat-and-ocean-ships-vector-set/20232052 -->
                     <defs>
                       <pattern id="boat_2_H" width="1" height="1">
                         <image xlink:href="img/dingy_H.svg" x="0" y="0" width="80" height="40" />

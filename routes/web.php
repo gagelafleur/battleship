@@ -66,6 +66,12 @@ Route::group(['middleware' => 'web'], function () {
 
   ]);
 
+  Route::post('/checkWinner', [
+
+      'uses' => 'GameController@checkWinner'
+
+  ]);
+
   Route::post('/checkOpponentHit', [
 
       'uses' => 'GameController@checkOpponentHit'
