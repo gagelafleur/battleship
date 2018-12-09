@@ -487,7 +487,7 @@ class GameController extends Controller
     $width = 40;
     $fill = "grey";
     $stroke = "black";
-    $strokeWidth = 4;
+    $strokeWidth = 0;
 
 
     if($orientation === "H"){
@@ -509,7 +509,7 @@ class GameController extends Controller
 
       if($idx == 0){
 
-        return "<rect id = 'ship_{$idx}' class = 'gamepiece' data-xcoord='{$horizOffset}' data-ycoord='{$vertOffset}' data-orientation='{$orientation}' data-length='{$length}' x='{$horizOffsetWidth}' y='{$vertOffsetHeight}' height='{$height}' width='{$shipWidth}' fill='{$fill}' stroke='{$stroke}' stroke-width='{$strokeWidth}'></rect>";
+        return "<rect id = 'ship_{$idx}' class = 'gamepiece boat_{$length}' data-xcoord='{$horizOffset}' data-ycoord='{$vertOffset}' data-orientation='{$orientation}' data-length='{$length}' x='{$horizOffsetWidth}' y='{$vertOffsetHeight}' height='{$height}' width='{$shipWidth}' fill='url(#boat_{$length}_{$orientation})' stroke='{$stroke}' stroke-width='{$strokeWidth}'></rect>";
 
       }else{
 
@@ -519,7 +519,7 @@ class GameController extends Controller
             $positions[$vertOffset][$horizOffset+$j] = "X";
           }
 
-          return "<rect id = 'ship_{$idx}' class = 'gamepiece' data-xcoord='{$horizOffset}' data-ycoord='{$vertOffset}' data-orientation='{$orientation}' data-length='{$length}' x='{$horizOffsetWidth}' y='{$vertOffsetHeight}' height='{$height}' width='{$shipWidth}' fill='{$fill}' stroke='{$stroke}' stroke-width='{$strokeWidth}'></rect>";
+          return "<rect id = 'ship_{$idx}' class = 'gamepiece' data-xcoord='{$horizOffset}' data-ycoord='{$vertOffset}' data-orientation='{$orientation}' data-length='{$length}' x='{$horizOffsetWidth}' y='{$vertOffsetHeight}' height='{$height}' width='{$shipWidth}' fill='url(#boat_{$length}_{$orientation})' stroke='{$stroke}' stroke-width='{$strokeWidth}'></rect>";
         }else{
           return GameController::getLegalPosition($idx, $length, $orientation, $positions);
         }
@@ -546,7 +546,7 @@ class GameController extends Controller
       $shipHeight = $height*$length;
       if($idx == 0){
 
-        return "<rect id = 'ship_{$idx}' class = 'gamepiece' data-xcoord='{$horizOffset}' data-ycoord='{$vertOffset}' data-orientation='{$orientation}' data-length='{$length}' x='{$horizOffsetWidth}' y='{$vertOffsetHeight}' height='{$shipHeight}' width='{$width}' fill='{$fill}' stroke='{$stroke}' stroke-width='{$strokeWidth}'></rect>";
+        return "<rect id = 'ship_{$idx}' class = 'gamepiece' data-xcoord='{$horizOffset}' data-ycoord='{$vertOffset}' data-orientation='{$orientation}' data-length='{$length}' x='{$horizOffsetWidth}' y='{$vertOffsetHeight}' height='{$shipHeight}' width='{$width}' fill='url(#boat_{$length}_{$orientation})' stroke='{$stroke}' stroke-width='{$strokeWidth}'></rect>";
 
       }else{
 
@@ -555,7 +555,7 @@ class GameController extends Controller
           for($j = 0; $j<$length;$j++){
             $positions[$vertOffset+$j][$horizOffset] = "X";
           }
-          return "<rect id = 'ship_{$idx}' class = 'gamepiece' data-xcoord='{$horizOffset}' data-ycoord='{$vertOffset}' data-orientation='{$orientation}' data-length='{$length}' x='{$horizOffsetWidth}' y='{$vertOffsetHeight}' height='{$shipHeight}' width='{$width}' fill='{$fill}' stroke='{$stroke}' stroke-width='{$strokeWidth}'></rect>";
+          return "<rect id = 'ship_{$idx}' class = 'gamepiece' data-xcoord='{$horizOffset}' data-ycoord='{$vertOffset}' data-orientation='{$orientation}' data-length='{$length}' x='{$horizOffsetWidth}' y='{$vertOffsetHeight}' height='{$shipHeight}' width='{$width}' fill='url(#boat_{$length}_{$orientation})' stroke='{$stroke}' stroke-width='{$strokeWidth}'></rect>";
         }else{
           return GameController::getLegalPosition($idx, $length, $orientation, $positions);
         }

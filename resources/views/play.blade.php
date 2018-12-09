@@ -21,7 +21,30 @@
                   <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="400px" height="400px">
 
                     <defs>
-
+                      <pattern id="boat_2_H" width="1" height="1">
+                        <image xlink:href="img/dingy_H.svg" x="0" y="0" width="80" height="40" />
+                      </pattern>
+                      <pattern id="boat_2_V" width="1" height="1">
+                        <image xlink:href="img/dingy_V.svg" x="0" y="0" width="40" height="80" />
+                      </pattern>
+                      <pattern id="boat_3_H" width="1" height="1">
+                        <image xlink:href="img/speedboat_H.svg" x="0" y="0" width="120" height="40" />
+                      </pattern>
+                      <pattern id="boat_3_V" width="1" height="1">
+                        <image xlink:href="img/speedboat_V.svg" x="0" y="0" width="40" height="120" />
+                      </pattern>
+                      <pattern id="boat_4_H" width="1" height="1">
+                        <image xlink:href="img/yacht_H.svg" x="0" y="0" width="160" height="40" />
+                      </pattern>
+                      <pattern id="boat_4_V" width="1" height="1">
+                        <image xlink:href="img/yacht_V.svg" x="0" y="0" width="40" height="160" />
+                      </pattern>
+                      <pattern id="boat_5_H" width="1" height="1">
+                        <image xlink:href="img/carrier_H.svg" x="0" y="0" width="200" height="40" />
+                      </pattern>
+                      <pattern id="boat_5_V" width="1" height="1">
+                        <image xlink:href="img/carrier_V.svg" x="0" y="0" width="40" height="200" />
+                      </pattern>
                     </defs>
 
                     {{ GameController::printOwnBoard() }}

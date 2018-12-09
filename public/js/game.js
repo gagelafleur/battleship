@@ -1,6 +1,8 @@
 ;(function($){
     'use strict';
 
+    const baseurl = "/759/battleship/public/";
+
     var game = undefined,
         currentStatus = "WAITING",
         chatPoller = 0,
@@ -16,7 +18,7 @@
           type: "POST",
           async: false,
           cache: false,
-          url: "/759/battleship/public/forfeitGame",
+          url: baseurl+"forfeitGame",
           data: game,
           dataType: "json",
           success: function(data){
@@ -58,7 +60,7 @@
         type: "POST",
         async: true,
         cache: false,
-        url: "/759/battleship/public/randomize",
+        url: baseurl+"randomize",
         data: $( this ).serialize(),
         dataType: "json",
         success: function(data){
@@ -117,7 +119,7 @@
         type: "POST",
         async: true,
         cache: false,
-        url: "/759/battleship/public/findGame",
+        url: baseurl+"findGame",
         data: $( this ).serialize(),
         dataType: "json",
         success: function(data){
@@ -157,7 +159,7 @@
         type: "POST",
         async: true,
         cache: false,
-        url: "/759/battleship/public/sendMessage",
+        url: baseurl+"sendMessage",
         data: $( this ).serialize(),
         dataType: "json",
         success: function(data){
@@ -181,7 +183,7 @@
           type: "POST",
           async: true,
           cache: false,
-          url: "/759/battleship/public/getMessages",
+          url: baseurl+"getMessages",
           data: game,
           dataType: "json",
           success: function(data){
@@ -208,7 +210,7 @@
           type: "POST",
           async: true,
           cache: false,
-          url: "/759/battleship/public/getGameStatus",
+          url: baseurl+"getGameStatus",
           data: game,
           dataType: "json",
           success: function(data){
@@ -257,7 +259,7 @@
           type: "POST",
           async: true,
           cache: false,
-          url: "/759/battleship/public/getGameUpdates",
+          url: baseurl+"getGameUpdates",
           data: game,
           dataType: "json",
           success: function(data){
@@ -293,7 +295,7 @@
         for(var j = 0; j < board[i].length; j++) {
           if(board[i][j] === "1"){
 
-            var svg = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+            /*var svg = document.createElementNS("http://www.w3.org/2000/svg", "rect");
             svg.setAttribute('class', 'hit-square');
             svg.setAttribute('width', '40');
             svg.setAttribute('height', '40');
@@ -302,19 +304,34 @@
             svg.setAttribute('x', parseInt(40*j));
             svg.setAttribute('y', parseInt(40*i));
             svg.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:xlink", "http://www.w3.org/1999/xlink");
-            document.getElementsByTagName("svg")[0].appendChild(svg);
+            document.getElementsByTagName("svg")[0].appendChild(svg);*/
+
+            var explosion = document.createElementNS("http://www.w3.org/2000/svg", "image");
+            explosion.setAttribute('class', 'hit-square');
+            explosion.setAttribute('id', 'explode_'+i+'_'+j);
+            explosion.setAttribute("x",parseInt(40*j));
+            explosion.setAttribute("y",parseInt(40*i));
+            explosion.setAttribute("width",40);
+            explosion.setAttribute("height",40);
+
+            //image from https://commons.wikimedia.org/wiki/File:Explosion-155624_icon.svg
+            explosion.setAttributeNS("http://www.w3.org/1999/xlink", "href", "img/explosion.svg");
+            document.getElementsByTagName("svg")[0].appendChild(explosion);
 
           }else if(board[i][j] === "!"){
 
-            var svg = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-            svg.setAttribute('class', 'miss-square');
-            svg.setAttribute('width', '40');
-            svg.setAttribute('height', '40');
-            svg.setAttribute('fill', 'blue');
-            svg.setAttribute('x', parseInt(40*j));
-            svg.setAttribute('y', parseInt(40*i));
-            svg.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:xlink", "http://www.w3.org/1999/xlink");
-            document.getElementsByTagName("svg")[0].appendChild(svg);
+            var splash = document.createElementNS("http://www.w3.org/2000/svg", "image");
+            splash.setAttribute('class', 'miss-square');
+            splash.setAttribute('width', '40');
+            splash.setAttribute('height', '40');
+            splash.setAttribute('fill', 'blue');
+            splash.setAttribute('x', parseInt(40*j));
+            splash.setAttribute('y', parseInt(40*i));
+
+            //image from https://pixabay.com/en/water-splash-fountain-blue-311139/
+            splash.setAttributeNS("http://www.w3.org/1999/xlink", "href", "img/splash.svg");
+            splash.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:xlink", "http://www.w3.org/1999/xlink");
+            document.getElementsByTagName("svg")[0].appendChild(splash);
 
           }
         }
@@ -340,7 +357,7 @@
           type: "POST",
           async: true,
           cache: false,
-          url: "/759/battleship/public/checkOpponentHit",
+          url: baseurl+"checkOpponentHit",
           data: shot,
           dataType: "json",
           success: function(data){
@@ -388,6 +405,8 @@
         let activePiece = document.getElementById(moverId);
         let myWidth = activePiece.getAttribute("width");
         let myHeight = activePiece.getAttribute("height");
+        let myLength = activePiece.getAttribute("data-length");
+        console.log(myLength);
 
 
 
@@ -398,9 +417,11 @@
         if($("#"+moverId).attr("data-orientation") === "H"){
           $("#"+moverId).attr("data-orientation", "V");
           $("#"+moverId).data("orientation", "V");
+          $("#"+moverId).attr("fill", "url(#boat_"+myLength+"_V)");
         }else if($("#"+moverId).attr("data-orientation") === "V"){
           $("#"+moverId).attr("data-orientation", "H");
           $("#"+moverId).data("orientation", "H");
+          $("#"+moverId).attr("fill", "url(#boat_"+myLength+"_H)");
         }
 
 
