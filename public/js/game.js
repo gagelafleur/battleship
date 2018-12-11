@@ -421,9 +421,13 @@
     });
 
     $(window).on('load', function(){
-      updateBoardArray();
-      document.getElementsByTagName("svg")[0].addEventListener( "mousemove", moveChecker, "false");
-      document.getElementsByTagName("svg")[0].addEventListener( "mouseup", releaseMouse, "false");
+      var myBoard = document.getElementsByTagName("svg")[0];
+      if(typeof myBoard !== "undefined"){
+        updateBoardArray();
+        myBoard.addEventListener( "mousemove", moveChecker, "false");
+        myBoard.addEventListener( "mouseup", releaseMouse, "false");
+      }
+
     });
 
 
