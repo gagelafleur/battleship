@@ -10,7 +10,7 @@
         boardPoller = 0,
         gameCleanedUp = false,
         board = [],
-        moverId, myX, myY, origX, origY, origWidth, origHeight, origOrient;
+        moverId, myX, myY, origX, origY, origWidth, origHeight, origOrient, origLength;
 
     function abandon(){
       if(typeof game != 'undefined' && game.status === "PLAYING"){
@@ -488,6 +488,7 @@
       origWidth = document.getElementById(moverId).getAttribute("width");
       origHeight = document.getElementById(moverId).getAttribute("height");
       origOrient = moverOrient;
+      origLength = moverLength;
 
       document.addEventListener("keydown", rotator, "false");
 
@@ -543,6 +544,7 @@
           origWidth = undefined;
           origHeight = undefined;
           origOrient = undefined;
+          origLength = undefined;
 
           document.removeEventListener("keydown", rotator, "false");
 
@@ -578,6 +580,8 @@
                  checkerEle.setAttribute("y", origY);
                  checkerEle.setAttribute("width", origWidth);
                  checkerEle.setAttribute("height", origHeight);
+                 checkerEle.setAttribute("fill", "url(#boat_"+origLength+"_"+origOrient+")");
+
                  $("#"+moverId).attr("data-orientation", origOrient);
                  $("#"+moverId).data("orientation", origOrient);
                  console.log(origX,origY);

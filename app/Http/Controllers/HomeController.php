@@ -33,7 +33,7 @@ class HomeController extends Controller
       $user->wins = Game::where('winner','=',$user->id)->orderBy('updated_at', 'desc')->count();
       $user->losses = Game::where('status','=','FINISHED')->where('winner','!=',$user->id)->where('player1Id', '=', $user->id)->orWhere('player2Id', '=', $user->id)->count();
 
-      $games = Game::where('status','=','FINISHED')->where('player1Id', '=', $user->id)->orWhere('player2Id', '=', $user->id)->orderBy('updated_at', 'desc')->get();
+      $games = Game::where('player1Id', '=', $user->id)->orWhere('player2Id', '=', $user->id)->where('status','=','FINISHED')->orderBy('updated_at', 'desc')->get();
 
       foreach($games as $game){
         if($game->winner !== NULL && $user->id === $game->winner){
