@@ -13,7 +13,14 @@ body{
   background-color: #efefef;
   border:solid black 1px;
 }
-
+.turn{
+  position: absolute;
+  text-align: center;
+  width:100%;
+  top:0;
+  padding: 10px 15px;
+  display:none;
+}
 .opponent{
   float:right;
 }
@@ -25,5 +32,17 @@ body{
 
 .opponent-board{
   padding:25px;
-  float:right;
+  @media (min-width: 1000px) {
+
+    float:right;
+
+  }
+}
+
+.below-board{
+  padding:25px;
+}
+
+.chat-container{
+  display:none;
 }

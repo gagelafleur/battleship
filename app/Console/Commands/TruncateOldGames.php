@@ -39,7 +39,7 @@ class TruncateOldGames extends Command
      */
     public function handle()
     {
-      Game::where('updated_at', '<', Carbon::now()->subMinutes(30)->toDateTimeString())->where('status','=','ABANDONED')->each(function ($game) {
+      Game::where('updated_at', '<', Carbon::now()->subMinutes(30)->toDateTimeString())->where('status','!=','FINISHED')->each(function ($game) {
         $game->delete();
       });
     }

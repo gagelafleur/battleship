@@ -255,6 +255,7 @@ class GameController extends Controller
     return response()->json([
         'success'  => true,
         'board' => $playerBoard,
+        'turn' => $game->playerTurn,
     ]);
 
   }
@@ -282,6 +283,7 @@ class GameController extends Controller
           'success'  => true,
           'message' => "You lost. Better luck next time.",
           'winner' => false,
+
       ]);
     }
 

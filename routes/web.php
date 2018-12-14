@@ -11,9 +11,7 @@
 |
 */
 
-Route::get('/', function () {
-    return view('home');
-});
+Route::get('/', 'HomeController@index');
 
 Auth::routes();
 
@@ -25,7 +23,7 @@ Route::get('/home', 'HomeController@index')->name('home');
 
 
 
-Route::group(['middleware' => 'web'], function () {
+Route::group(['middleware' => 'auth'], function () {
 
   Route::get('/play', [
 
@@ -87,5 +85,5 @@ Route::group(['middleware' => 'web'], function () {
       'uses' => 'GameController@randomizeBoardAjax'
 
   ]);*/
-  
+
 });

@@ -84,6 +84,11 @@
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}"></script>
     <script src="{{ asset('js/jquery.growl.js') }}"></script>
+    @auth
+    <script>
+      const uid = {{ Auth::user()->id }};
+    </script>
+    @endauth
     <script src="{{ asset('js/game.js') }}"></script>
     <script>
       $.ajaxSetup({

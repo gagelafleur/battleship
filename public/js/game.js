@@ -8,6 +8,7 @@
         chatPoller = 0,
         gamePoller = 0,
         boardPoller = 0,
+        playerId = undefined,
         gameCleanedUp = false,
         board = [],
         moverId, myX, myY, origX, origY, origWidth, origHeight, origOrient, origLength;
@@ -112,6 +113,7 @@
 
     $("#starter").on("submit",function(e){
       e.preventDefault();
+      $(this).fadeOut(300, function() { $(this).remove(); });
       //console.log($( this ).serialize());
       //send board data with this call.
 
@@ -224,8 +226,7 @@
               $('.opponent-name').text("");
               window.alert('Your opponent has forfeited the match.');
               window.location.href='http://gagelafleur.com/759/battleship/public/';
-            }
-            if(currentStatus === "WAITING"  && game.status === "PLAYING"){
+            }else if(currentStatus === "WAITING"  && game.status === "PLAYING"){
               //remove ability to move pieces on own board
               console.log("game started. making board read only.");
               document.getElementsByTagName("svg")[0].removeEventListener( "mousemove", moveChecker, "false");
@@ -238,10 +239,18 @@
                 opponentSquares[i].addEventListener( "mouseup", fire, "false");
               }
 
+              $(".chat-container").slideToggle(300);
+              if(game.playerTurn === uid){
+                $("#turn-indicator").text("Your");
+              }else{
+                $("#turn-indicator").text("Opponent's");
+              }
+              $(".turn").fadeIn(300);
+              //console.log(game);
               boardPoller = setInterval(pollBoard, 2500);
 
 
-            }if(currentStatus === "PLAYING"  && game.status === "FINISHED"){
+            }else if(currentStatus === "PLAYING"  && game.status === "FINISHED"){
               clearInterval(boardPoller);
               checkWinner();
             }
@@ -268,9 +277,13 @@
             console.log(data);
             if(data.success && data.winner){
               $.growl.notice({ title:"Winner!", message: data.message });
+              $(".turn").text("Game Over. You Won!");
             }else if(data.success && !data.winner){
               $.growl.notice({ title:"Sorry :(", message: data.message });
+              $(".turn").text("Game Over. You Lost :(");
             }
+
+
 
           },
           failure: function() {
@@ -294,12 +307,18 @@
             //game = data.data;
             var serverBoard = JSON.parse(data.board)
             //console.log(compareBoards(board, serverBoard));
-            //console.log(board);
+            console.log(data);
             //console.log(serverBoard);
 
             if(!compareBoards(board, serverBoard)){
               board = serverBoard;
               updateBoardHits();
+            }
+
+            if(data.turn === uid){
+              $("#turn-indicator").text("Your");
+            }else{
+              $("#turn-indicator").text("Opponent's");
             }
 
 

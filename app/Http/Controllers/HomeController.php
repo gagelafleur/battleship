@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Auth;
 use App\User;
 use App\Game;
 
@@ -23,19 +24,21 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
     {
-
-      if ($request->user()) {
-        $user = $request->user();
-      }
+      $user = Auth::user();
 
       $user->wins = Game::where('winner','=',$user->id)->orderBy('updated_at', 'desc')->count();
       $user->losses = Game::where('status','=','FINISHED')->where('winner','!=',$user->id)->where('player1Id', '=', $user->id)->orWhere('player2Id', '=', $user->id)->count();
 
-      $games = Game::where('player1Id', '=', $user->id)->orWhere('player2Id', '=', $user->id)->where('status','=','FINISHED')->orderBy('updated_at', 'desc')->get();
+      $games = Game::where('status','=','FINISHED')->where('player1Id', '=', $user->id)->orWhere('player2Id', '=', $user->id)->orderBy('updated_at', 'desc')->get();
 
-      foreach($games as $game){
+      foreach($games as $index => $game){
+
+        if($game->status !== "FINISHED"){
+          unset($games[$index]);
+        }
+
         if($game->winner !== NULL && $user->id === $game->winner){
           $game->result = "WIN";
         }else if($game->winner !== NULL && $user->id !== $game->winner){

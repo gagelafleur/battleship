@@ -14,7 +14,7 @@
                         </div>
                     @endif
 
-                    @if (Auth::check())
+                    @auth
 
                       <a href = "{{route('game.play')}}" class = "btn  btn-success">Play a Game</a><br /><br /><br />
 
@@ -54,9 +54,10 @@
                           </tbody>
                         </table>
                       </div>
-                    @else
+                    @endauth
+                    @guest
                       Please <a href="{{ route('login') }}">Login</a> or <a href="{{ route('register') }}">Register</a>
-                    @endif
+                    @endguest
                 </div>
             </div>
         </div>
