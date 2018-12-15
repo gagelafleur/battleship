@@ -216,7 +216,7 @@
           data: game,
           dataType: "json",
           success: function(data){
-            //console.log( JSON.stringify(data.data) );
+            console.log( data );
             game = data.data;
             $('.status').text(game.status);
             $('.opponent-name').text(game.opponentName);

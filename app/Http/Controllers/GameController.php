@@ -201,6 +201,7 @@ class GameController extends Controller
 
       if($game->player1Id === $user->id){
         $game->player1Name = $user->name;
+        $game->player2Board = NULL;
       }else{
         $game->player1Name = User::where('id', $game->player1Id)->first()->name;
         $game->opponentName = $game->player1Name;
@@ -216,6 +217,7 @@ class GameController extends Controller
 
       if($game->player2Id === $user->id){
         $game->player2Name = $user->name;
+        $game->player1Board = NULL;
       }else{
         $game->player2Name = User::where('id', $game->player2Id)->first()->name;
         $game->opponentName = $game->player2Name;
