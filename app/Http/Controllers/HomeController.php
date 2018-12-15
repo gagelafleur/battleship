@@ -29,7 +29,14 @@ class HomeController extends Controller
       $user = Auth::user();
 
       $user->wins = Game::where('winner','=',$user->id)->orderBy('updated_at', 'desc')->count();
-      $user->losses = Game::where('status','=','FINISHED')->where('winner','!=',$user->id)->where('player1Id', '=', $user->id)->orWhere('player2Id', '=', $user->id)->count();
+
+      $user->losses = Game::where('status','=','FINISHED')->where('winner','!=',$user->id)->where(function($query) use ($user){
+          return $query
+          ->where('player1Id', '=', $user->id)
+          ->orWhere('player2Id', '=', $user->id);
+      })->count();
+
+      //where('player1Id', '=', $user->id)->orWhere('player2Id', '=', $user->id)->count();
 
       $games = Game::where('status','=','FINISHED')->where('player1Id', '=', $user->id)->orWhere('player2Id', '=', $user->id)->orderBy('updated_at', 'desc')->get();
 
