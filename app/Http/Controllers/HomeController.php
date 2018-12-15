@@ -28,7 +28,7 @@ class HomeController extends Controller
     {
       $user = Auth::user();
 
-      $user->wins = Game::where('winner','=',$user->id)->orderBy('updated_at', 'desc')->count();
+      $user->wins = Game::where('winner','=',$user->id)->where('status','=','FINISHED')->orderBy('updated_at', 'desc')->count();
 
       $user->losses = Game::where('status','=','FINISHED')->where('winner','!=',$user->id)->where(function($query) use ($user){
           return $query
