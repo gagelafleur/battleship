@@ -533,11 +533,12 @@
 
         var b = $( ".board svg" );
         var position = b.position();
+        var yOffset = $(window).scrollTop();
         //console.log((evt.clientX-offset.left) , (evt.clientY-offset.top));
-
+        console.log(yOffset);
         //move checker on the SVG stage to mouse location
         checkerEle.setAttribute("x", evt.clientX-position.left);
-        checkerEle.setAttribute("y", evt.clientY-position.top);
+        checkerEle.setAttribute("y", evt.clientY-position.top+yOffset);
         /*$("#"+moverId).attr("data-xcoord", evt.clientX-position.left);
         $("#"+moverId).data("data-xcoord", evt.clientX-position.left);
         $("#"+moverId).attr("data-xcoord", evt.clientX-position.left);
