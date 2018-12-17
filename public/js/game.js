@@ -2,7 +2,8 @@
     'use strict';
 
     const baseurl = "/759/battleship/public/";
-    const debug = true;
+    const svgns = "http://www.w3.org/2000/svg";
+    const debug = false;
 
     var game = undefined,
         currentStatus = "WAITING",
@@ -102,6 +103,7 @@
     $("#starter").on("submit",function(e){
       e.preventDefault();
       $(this).fadeOut(300, function() { $(this).remove(); });
+      $('.instruct').fadeOut(300, function() { $('.instruct').remove(); });
 
       $.ajax({
         type: "POST",
@@ -192,7 +194,12 @@
           data: game,
           dataType: "json",
           success: function(data){
-            console.log( data );
+
+
+            if(debug){
+              console.log( data );
+            }
+
             game = data.data;
             $('.status').text(game.status);
             $('.opponent-name').text(game.opponentName);
@@ -204,7 +211,10 @@
               window.location.href='http://gagelafleur.com/759/battleship/public/';
             }else if(currentStatus === "WAITING"  && game.status === "PLAYING"){
               //remove ability to move pieces on own board
-              console.log("game started. making board read only.");
+              if(debug){
+                console.log("game started. making board read only.");
+              }
+
               document.getElementsByTagName("svg")[0].removeEventListener( "mousemove", moveChecker, "false");
               document.getElementsByTagName("svg")[0].removeEventListener( "mouseup", releaseMouse, "false");
 
@@ -223,11 +233,11 @@
               }
               $(".turn").fadeIn(300);
 
-              boardPoller = setInterval(pollBoard, 2500);
+              boardPoller = setInterval(pollBoard, 500);
 
 
             }else if(currentStatus === "PLAYING"  && game.status === "FINISHED"){
-              clearInterval(boardPoller);
+
               checkWinner();
             }
             currentStatus = game.status;
@@ -261,6 +271,11 @@
             }else if(data.success && !data.winner){
               $.growl.notice({ title:"Sorry :(", message: data.message });
               $(".turn").text("Game Over. You Lost :(");
+            }
+
+            if(data.success){
+              clearInterval(boardPoller);
+              clearInterval(gamePoller);
             }
 
           },
@@ -302,6 +317,10 @@
               $("#turn-indicator").text("Your");
             }else{
               $("#turn-indicator").text("Opponent's");
+            }
+
+            if(data.success === null){
+              clearInterval(boardPoller);
             }
 
 
@@ -358,7 +377,10 @@
 
 
     function fire(e){
-      console.log(e.target.id, game.playerTurn);
+
+      if(debug){
+        console.log(e.target.id, game.playerTurn);
+      }
 
       var xShot = $("#"+e.target.id).attr("data-xcoord");
       var yShot = $("#"+e.target.id).attr("data-ycoord");
@@ -390,11 +412,13 @@
             }
 
             if(data.success && data.shot === "X"){
-              $("#"+e.target.id).attr("fill", "red");
+              //$("#"+e.target.id).attr("fill", "red");
+              placePeg(e.target.id, true);
               document.getElementById(e.target.id).removeEventListener( "mouseup", fire, "false");
               $.growl.notice({ message: "Hit at: "+xShot+", "+yShot });
             }else if(data.success && data.shot === "0"){
-              $("#"+e.target.id).attr("fill", "grey");
+              //$("#"+e.target.id).attr("fill", "grey");
+              placePeg(e.target.id, false);
               document.getElementById(e.target.id).removeEventListener( "mouseup", fire, "false");
               $.growl.warning({ message: "Miss at: "+xShot+", "+yShot });
             }
@@ -461,6 +485,22 @@
         }
 
       }
+    }
+
+    function placePeg(target, hit){
+      var fill = "white";
+      var targetSquare = document.getElementById( target );
+      if(hit){
+        fill = "red";
+      }
+      var circle = document.createElementNS(svgns, 'circle');
+      circle.setAttributeNS(null, 'cx', (parseInt(targetSquare.getAttribute("x"))+parseInt((targetSquare.getAttribute("width")/2))));
+      circle.setAttributeNS(null, 'cy', (parseInt(targetSquare.getAttribute("y"))+parseInt((targetSquare.getAttribute("height")/2))));
+      circle.setAttributeNS(null, 'r', 7);
+      circle.setAttributeNS(null, 'fill', fill);
+      circle.setAttributeNS(null, 'stroke', "black");
+      circle.setAttributeNS(null, 'stroke-width', "2px");
+      document.getElementById( "opponent-board" ).getElementsByTagName("svg")[0].appendChild(circle);
     }
 
 

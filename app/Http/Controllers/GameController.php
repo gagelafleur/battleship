@@ -399,7 +399,7 @@ class GameController extends Controller
 
     $height = 40;
     $width = 40;
-    $fill = "white";
+    $fill = "#39aac1";
     $stroke = "blue";
     $strokeWidth = 1;
 
@@ -427,7 +427,7 @@ class GameController extends Controller
 
     $height = 40;
     $width = 40;
-    $fill = "white";
+    $fill = "#39aac1";
     $stroke = "blue";
     $strokeWidth = 1;
 
