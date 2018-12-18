@@ -373,7 +373,7 @@
             explosion.setAttribute("height",40);
 
             //image from https://commons.wikimedia.org/wiki/File:Explosion-155624_icon.svg
-            explosion.setAttributeNS("http://www.w3.org/1999/xlink", "href", "img/explosion.svg");
+            explosion.setAttributeNS("http://www.w3.org/1999/xlink", "href", "public/img/explosion.svg");
             document.getElementsByTagName("svg")[0].appendChild(explosion);
 
           }else if(board[i][j] === "!"){
@@ -387,7 +387,7 @@
             splash.setAttribute('y', parseInt(40*i));
 
             //image from https://pixabay.com/en/water-splash-fountain-blue-311139/
-            splash.setAttributeNS("http://www.w3.org/1999/xlink", "href", "img/splash.svg");
+            splash.setAttributeNS("http://www.w3.org/1999/xlink", "href", "public/img/splash.svg");
             splash.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:xlink", "http://www.w3.org/1999/xlink");
             document.getElementsByTagName("svg")[0].appendChild(splash);
 
