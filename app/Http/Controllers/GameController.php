@@ -180,6 +180,8 @@ class GameController extends Controller
       $message = new Message();
       $message->userId = $user->id;
       $message->gameID = $request['gameId'];
+      $request['chat'] = preg_replace('#<script(.*?)>(.*?)</script>#is', '', $request['chat']);
+
       $message->message = $request['chat'];
       $message->save();
 
