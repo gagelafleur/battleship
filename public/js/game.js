@@ -3,7 +3,7 @@
 
     const baseurl = "/";
     const svgns = "http://www.w3.org/2000/svg";
-    const debug = true;
+    const debug = false;
 
     var game = undefined,
         currentStatus = "WAITING",
@@ -16,15 +16,17 @@
         moverId, myX, myY, origX, origY, origWidth, origHeight, origOrient, origLength;
 
 
-
+    //sets game as ABANDONED
     $(window).on('beforeunload', function(){
       abandon();
     });
 
+    //sets game as ABANDONED
     $(window).on('unload', function(){
       abandon();
     });
 
+    //makes the server call to set the game as ABANDONED
     function abandon(){
       if(typeof game != 'undefined' && game.status === "PLAYING"){
         $.ajax({
@@ -38,13 +40,13 @@
             gameCleanedUp = true;
           },
           failure: function() {
-
+            $.growl.warning({ message: "An error occurred. Please try again."  });
           },
         });
       }
     }
 
-
+    //updates board array based on location of ships on the svg board
     function updateBoardArray(){
 
       board = [
@@ -85,6 +87,9 @@
 
     //chat functions
 
+
+    //sends the chat message to the server
+    //then polls the server for new messages
     $("#chat").on("submit",function(e){
       e.preventDefault();
 
@@ -102,14 +107,14 @@
 
         },
         failure: function() {
-
+          $.growl.warning({ message: "An error occurred. Please try again."  });
         },
       });
 
       return false;
     });
 
-
+    //polls the server for new messages can then displays them in the chat window
     function pollChat(){
 
       if(typeof game != 'undefined'){
@@ -130,7 +135,7 @@
             }
           },
           failure: function() {
-
+            $.growl.warning({ message: "An error occurred. Please try again."  });
           },
         });
       }
@@ -138,6 +143,7 @@
 
     //play functions
 
+    //send board to the server and start the search for an opponent when start button is clicked
     $("#starter").on("submit",function(e){
       e.preventDefault();
       $(this).fadeOut(300, function() { $(this).remove(); });
@@ -164,13 +170,14 @@
 
         },
         failure: function() {
-
+          $.growl.warning({ message: "An error occurred. Please try again."  });
         },
       });
 
       return false;
     });
 
+    //polls server for game information and status
     function pollGame(){
       if(typeof game != 'undefined'){
         $.ajax({
@@ -230,13 +237,13 @@
             currentStatus = game.status;
           },
           failure: function() {
-
+            $.growl.warning({ message: "An error occurred. Please try again."  });
           },
         });
       }
     }
 
-
+    //checks the server to see if all ships have been sunk for one player
     function checkWinner(){
       if(typeof game != 'undefined'){
         $.ajax({
@@ -267,12 +274,13 @@
 
           },
           failure: function() {
-
+            $.growl.warning({ message: "An error occurred. Please try again."  });
           },
         });
       }
     }
 
+    //polls server to see if opponent has played their turn
     function pollBoard(){
       if(typeof game != 'undefined'){
         $.ajax({
@@ -313,7 +321,7 @@
 
           },
           failure: function() {
-
+            $.growl.warning({ message: "An error occurred. Please try again."  });
           },
         });
       }
@@ -321,6 +329,7 @@
 
     }
 
+    //used to see if board has been updated by opponent playing their turn
     function compareBoards(arr1, arr2) {
 
       if(arr1.length !== arr2.length){
@@ -345,6 +354,7 @@
 
     //move/board hit functions
 
+    //adds hit or miss graphics to own board when an opponent has played their turn
     function updateBoardHits(){
 
       $('.hit-square').remove();
@@ -386,7 +396,7 @@
       }
     }
 
-
+    //call to server to fire a shot on their grid
     function fire(e){
 
       if(debug){
@@ -436,12 +446,13 @@
 
           },
           failure: function() {
-
+            $.growl.warning({ message: "An error occurred. Please try again."  });
           },
         });
       }
     }
 
+    //adds a red or white circle to opponent's board for hit or miss
     function placePeg(target, hit){
       var fill = "white";
       var targetSquare = document.getElementById( target );
@@ -463,6 +474,7 @@
 
     //board setup functions
 
+    //listener for clicks on ships
     $(".gamepiece").on('mousedown', function(){
 
       if(debug){
@@ -473,6 +485,7 @@
 
     });
 
+    //initializes board array and adds event listeners for mouse events
     $(window).on('load', function(){
 
       var myBoard = document.getElementsByTagName("svg")[0];
@@ -485,7 +498,7 @@
 
     });
 
-
+    //rotate the ship when shift key is pressed during dragging
     function rotator(event){
       if(moverId && event.shiftKey){
         let activePiece = document.getElementById(moverId);
@@ -519,7 +532,10 @@
       }
     }
 
+    //starts drag and drop movement
+    //adds event listener for rotating the ship when the shift key is pressed
     function setMove(pId){
+
 
       moverId = pId;
       myX = parseInt(document.getElementById(moverId).getAttribute("x"));
@@ -551,7 +567,7 @@
       origY = moverY*40;
       origWidth = document.getElementById(moverId).getAttribute("width");
       origHeight = document.getElementById(moverId).getAttribute("height");
-      origOrient = moverOrient;
+      origOrient = document.getElementById(moverId).getAttribute("data-orientation");
       origLength = moverLength;
 
       document.addEventListener("keydown", rotator, "false");
@@ -562,11 +578,11 @@
     }
 
     //getting called for every mouse movement
-    //only move checker if it's been clicked on
+    //only move ship if it's been clicked on
     function moveChecker(evt){
 
       if(moverId){
-        let checkerEle = document.getElementById(moverId);
+        let ship = document.getElementById(moverId);
 
         var b = $( ".board svg" );
         var position = b.position();
@@ -574,14 +590,16 @@
 
         if(debug){
           console.log(yOffset);
+          console.log(evt.clientX);
         }
 
-        checkerEle.setAttribute("x", evt.clientX-position.left);
-        checkerEle.setAttribute("y", evt.clientY-position.top+yOffset);
+        ship.setAttribute("x", evt.clientX-position.left);
+        ship.setAttribute("y", evt.clientY-position.top+yOffset);
       }
 
     }
 
+    //handles the dropping of the piece on the board
     function releaseMouse(){
 
       if(moverId){
@@ -591,24 +609,26 @@
 
         updateCoords(moverId);
 
-        if(checkHit(curX, curY)){
-
-          moverId = undefined;
-          origX = undefined;
-          origY = undefined;
-          origWidth = undefined;
-          origHeight = undefined;
-          origOrient = undefined;
-          origLength = undefined;
-
-          document.removeEventListener("keydown", rotator, "false");
-
-        }
+        checkHit(curX, curY);
 
       }
+      moverId = undefined;
+      myX = undefined;
+      myY  = undefined;
+      origX = undefined;
+      origY = undefined;
+      origWidth = undefined;
+      origHeight = undefined;
+      origOrient = undefined;
+      origLength = undefined;
+
+      document.removeEventListener("keydown", rotator, "false");
 
     }
 
+    //determines the square that a ship is dropped on
+    //if the positioning is legal it is placed there and the board is updated
+    //if the positioning is illegal the piece is returned to its starting position
     function checkHit(curX, curY){
       for(let i=0;i<10;i++){
         for(let j=0;j<10;j++){
@@ -619,28 +639,26 @@
              curY > dropTarget.y &&
              curY < dropTarget.y+dropTarget.height ){
 
-               if(moverId && checkLegal(moverId)){
 
-                 let checkerEle = document.getElementById(moverId);
-                 checkerEle.setAttribute("x", dropTarget.x);
-                 checkerEle.setAttribute("y", dropTarget.y);
+
+               if(checkLegal(moverId) && moverId){
+
+                 let shipEle = document.getElementById(moverId);
+                 shipEle.setAttribute("x", dropTarget.x);
+                 shipEle.setAttribute("y", dropTarget.y);
 
                }else if(moverId){
 
                  //return to original position
-                 let checkerEle = document.getElementById(moverId);
-                 checkerEle.setAttribute("x", origX);
-                 checkerEle.setAttribute("y", origY);
-                 checkerEle.setAttribute("width", origWidth);
-                 checkerEle.setAttribute("height", origHeight);
-                 checkerEle.setAttribute("fill", "url(#boat_"+origLength+"_"+origOrient+")");
+                 let shipEle = document.getElementById(moverId);
+                 shipEle.setAttribute("x", origX);
+                 shipEle.setAttribute("y", origY);
+                 shipEle.setAttribute("width", origWidth);
+                 shipEle.setAttribute("height", origHeight);
+                 shipEle.setAttribute("fill", "url(#boat_"+origLength+"_"+origOrient+")");
 
                  $("#"+moverId).attr("data-orientation", origOrient);
                  $("#"+moverId).data("orientation", origOrient);
-
-                 if(debug){
-                   console.log(origX,origY);
-                 }
 
                  updateCoords(moverId);
 
@@ -659,6 +677,7 @@
       }
     }
 
+    //updates the coordinates of a ship based on the x/y values
     function updateCoords(piece){
 
       var ship = $("#"+piece);
@@ -674,6 +693,7 @@
 
     }
 
+    //checks to see if a piece is dropped in a legal position
     function checkLegal(piece){
 
       var legal = true;
@@ -686,31 +706,37 @@
         console.log("checkLegal", checkX, checkY, checkLength, checkOrient);
       }
 
-
       if(checkOrient === "H" && (checkX+checkLength) > 10){
         if(debug){
           console.log("offBoard");
         }
         return false;
+
       }else if(checkOrient === "V" && (checkY+checkLength) > 10){
+
         if(debug){
           console.log("offBoard");
         }
         return false;
-      }else{
 
+      }else{
 
         if(debug){
           console.log("onboard check");
         }
 
         for(var i=0;i<checkLength;i++){
+
           if(checkOrient === "H"){
+
             var verifyX = checkX+i;
             var verifyY = checkY;
+
           }else{
+
             var verifyX = checkX;
             var verifyY = checkY+i;
+
           }
 
           try {
@@ -737,7 +763,9 @@
 
           }catch(error) {
 
-            console.log("checkLegalError", verifyX, verifyY, checkLength, checkOrient);
+            if(debug){
+              console.log("checkLegalError", verifyX, verifyY, checkLength, checkOrient);
+            }
 
           }
 
