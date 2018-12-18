@@ -42,6 +42,14 @@ class GameController extends Controller
       return view('play')->with('user', $user); ;
   }
 
+  /**
+   *
+   * Starts a game
+   *
+   * @param    request  $request containing the board array
+   * @return \Illuminate\Http\Response
+   *
+   */
   public function startGame(Request $request)
   {
 
@@ -92,11 +100,26 @@ class GameController extends Controller
 
   }
 
+  /**
+   *
+   * Finds a game without an opponent
+   *
+   * @return Game
+   *
+   */
   public function findGame(){
     $existingGame = Game::orderBy('created_at', 'asc')->whereNull('player2Id')->where("status", "=" , "WAITING")->first();
     return $existingGame;
   }
 
+  /**
+   *
+   * Marks a game as abandoned
+   *
+   * @param    request  $request containing the game id
+   * @return \Illuminate\Http\Response
+   *
+   */
   public function forfeitGame(Request $request)
   {
     $this->validate($request, [
@@ -128,6 +151,14 @@ class GameController extends Controller
 
   }
 
+  /**
+   *
+   * Sends a message to the chat box
+   *
+   * @param    request  $request containing the game id and message
+   * @return \Illuminate\Http\Response
+   *
+   */
   public function sendMessage(Request $request)
   {
 
@@ -161,6 +192,14 @@ class GameController extends Controller
 
   }
 
+  /**
+   *
+   * Gets messages associates with current game
+   *
+   * @param    request  $request containing the game id
+   * @return \Illuminate\Http\Response
+   *
+   */
   public function getMessages(Request $request)
   {
 
@@ -191,6 +230,14 @@ class GameController extends Controller
 
   }
 
+  /**
+   *
+   * Gets the status of the current game
+   *
+   * @param    request  $request containing the game id
+   * @return \Illuminate\Http\Response
+   *
+   */
   public function getGameStatus(Request $request)
   {
 
@@ -242,6 +289,14 @@ class GameController extends Controller
 
   }
 
+  /**
+   *
+   * Gets board and turn updates
+   *
+   * @param    request  $request containing the game id
+   * @return \Illuminate\Http\Response
+   *
+   */
   public function getGameUpdates(Request $request){
     $this->validate($request, [
 
@@ -268,6 +323,14 @@ class GameController extends Controller
 
   }
 
+  /**
+   *
+   * Checks the game to see if there is a winner
+   *
+   * @param    request  $request containing the game id
+   * @return \Illuminate\Http\Response
+   *
+   */
   public function checkWinner(Request $request){
     $this->validate($request, [
 
@@ -301,6 +364,15 @@ class GameController extends Controller
 
   }
 
+
+  /**
+   *
+   * plays a move on the opponents board
+   *
+   * @param    request  $request containing the game id, x coord and y coord
+   * @return \Illuminate\Http\Response
+   *
+   */
   public function checkOpponentHit(Request $request)
   {
 
@@ -383,6 +455,14 @@ class GameController extends Controller
 
   }
 
+  /**
+   *
+   * checks win condition
+   *
+   * @param    checkBoard  $checkBoard array
+   * @return   number of hits
+   *
+   */
   public function countHits($checkBoard){
     $count = 0;
     $hitMarker = "1";
@@ -396,6 +476,14 @@ class GameController extends Controller
     return $count;
   }
 
+  /**
+   *
+   * checks number of Xs representing ships
+   *
+   * @param    checkBoard  $checkBoard array
+   * @return   number of ship squares
+   *
+   */
   public function countShips($checkBoard){
     $count = 0;
     $hitMarker = "X";
@@ -409,7 +497,12 @@ class GameController extends Controller
     return $count;
   }
 
-
+  /**
+   *
+   * static function to print own board html
+   *
+   *
+   */
   public static function printOwnBoard(){
 
     $height = 40;
@@ -437,6 +530,12 @@ class GameController extends Controller
 
   }
 
+  /**
+   *
+   * static function to print opponent board html
+   *
+   *
+   */
   public static function printOpponentBoard(){
 
     $height = 40;
@@ -464,6 +563,12 @@ class GameController extends Controller
 
   }
 
+  /**
+   *
+   * static function to randomize own board
+   *
+   *
+   */
   public static function randomizeBoard(){
 
     $shipLengths = array(2,3,3,4,5);
@@ -494,6 +599,12 @@ class GameController extends Controller
 
   }
 
+  /**
+   *
+   * static place ships in random spots
+   *
+   *
+   */
   public static function getLegalPosition($idx, $length, $orientation, &$positions){
 
     $height = 40;
@@ -576,6 +687,12 @@ class GameController extends Controller
 
   }
 
+  /**
+   *
+   * debugging function
+   *
+   *
+   */
   public static function printPositions(&$positions){
     for($k = 0; $k < sizeOf($positions); $k++){
       foreach($positions[$k] as $key => $val){
@@ -585,6 +702,12 @@ class GameController extends Controller
     }
   }
 
+  /**
+   *
+   * static function to check if a random ship placement is legal
+   *
+   *
+   */
   public static function checkLegal($thisPositions, &$positions, $orientation){
     $legal = true;
     foreach($thisPositions as $key => $value){
