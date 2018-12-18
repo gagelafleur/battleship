@@ -36,8 +36,6 @@ class HomeController extends Controller
           ->orWhere('player2Id', '=', $user->id);
       })->count();
 
-      //where('player1Id', '=', $user->id)->orWhere('player2Id', '=', $user->id)->count();
-
       $games = Game::where('status','=','FINISHED')->where('player1Id', '=', $user->id)->orWhere('player2Id', '=', $user->id)->orderBy('updated_at', 'desc')->get();
 
       foreach($games as $index => $game){
@@ -61,5 +59,7 @@ class HomeController extends Controller
       }
 
       return view('home',['user' => $user, 'games' => $games]);
+
     }
+
 }

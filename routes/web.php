@@ -22,7 +22,6 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function() {
 Route::get('/home', 'HomeController@index')->name('home');
 
 
-
 Route::group(['middleware' => 'auth'], function () {
 
   Route::get('/play', [
@@ -79,11 +78,5 @@ Route::group(['middleware' => 'auth'], function () {
       'uses' => 'GameController@checkOpponentHit'
 
   ]);
-
-  /*Route::post('/randomize', [
-
-      'uses' => 'GameController@randomizeBoardAjax'
-
-  ]);*/
 
 });

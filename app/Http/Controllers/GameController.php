@@ -54,14 +54,23 @@ class GameController extends Controller
     $game = $this->findGame();
     $currentPlayer = Auth::User();
 
+    $proposedBoard = json_decode($request['board'], true);
+
+    if($this->countShips($proposedBoard) !== 17){
+
+      return response()->json([
+          'success'  => false,
+          'message' => 'Not enough ships on the board.'
+      ]);
+
+    }
+
     if(count($game) > 0 && $game->player1Id !== $currentPlayer->id){
 
       $game->player2Id = $currentPlayer->id;
       $game->player2Board = $request['board'];
       $game->status = "PLAYING";
       $game->save();
-
-
 
     }else{
 
@@ -76,14 +85,11 @@ class GameController extends Controller
 
     }
 
-
-
-
     return response()->json([
         'success'  => true,
         'data' => $game
     ]);
-    //
+
   }
 
   public function findGame(){
@@ -339,8 +345,6 @@ class GameController extends Controller
         $game->save();
       }
 
-
-
     }else if($game->player2Id === $user->id){
 
       $opponentBoard = json_decode($game->player1Board, true);
@@ -362,7 +366,6 @@ class GameController extends Controller
 
     }
 
-
     $opponentHits = $this->countHits($opponentBoard);
 
     if($opponentHits == 17){
@@ -371,7 +374,6 @@ class GameController extends Controller
       $game->status = "FINISHED";
       $game->save();
     }
-
 
     return response()->json([
         'success'  => true,
@@ -384,6 +386,19 @@ class GameController extends Controller
   public function countHits($checkBoard){
     $count = 0;
     $hitMarker = "1";
+    foreach($checkBoard as $row){
+      foreach($row as $square){
+        if($square === $hitMarker){
+          $count++;
+        }
+      }
+    }
+    return $count;
+  }
+
+  public function countShips($checkBoard){
+    $count = 0;
+    $hitMarker = "X";
     foreach($checkBoard as $row){
       foreach($row as $square){
         if($square === $hitMarker){
@@ -420,7 +435,6 @@ class GameController extends Controller
 
     print $board;
 
-
   }
 
   public static function printOpponentBoard(){
@@ -447,7 +461,6 @@ class GameController extends Controller
     }
 
     print $board;
-
 
   }
 
@@ -481,37 +494,6 @@ class GameController extends Controller
 
   }
 
-  /*public static function randomizeBoardAjax(){
-
-    $shipLengths = array(2,3,3,4,5);
-    shuffle($shipLengths);
-
-    $shipOrientations = array();
-
-    for($i = 0; $i<sizeOf($shipLengths);$i++){
-
-      if(rand(0,1) == 0){
-        $shipOrientations[] = "H";
-      }else{
-        $shipOrientations[] = "V";
-      }
-
-    }
-    shuffle($shipOrientations);
-
-    $pieces = "";
-
-    for($i = 0; $i<sizeOf($shipLengths);$i++){
-
-      $pieces .= GameController::getLegalPosition($i, $shipLengths[$i], $shipOrientations[$i], $positions);
-
-    }
-
-    //print $pieces;
-    return response($pieces)->header('Content-Type', 'text/plain');
-
-  }*/
-
   public static function getLegalPosition($idx, $length, $orientation, &$positions){
 
     $height = 40;
@@ -519,7 +501,6 @@ class GameController extends Controller
     $fill = "grey";
     $stroke = "black";
     $strokeWidth = 0;
-
 
     if($orientation === "H"){
 
@@ -559,8 +540,6 @@ class GameController extends Controller
 
     }else if($orientation === "V"){
 
-
-
       $horizOffset = rand ( 0 , 9 );
       $vertOffset = rand ( 0 , (9-$length));
       for($j = 0; $j<$length;$j++){
@@ -591,8 +570,8 @@ class GameController extends Controller
           return GameController::getLegalPosition($idx, $length, $orientation, $positions);
         }
 
-
       }
+
     }
 
   }

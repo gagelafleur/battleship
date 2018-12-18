@@ -1,9 +1,9 @@
 ;(function($){
     'use strict';
 
-    const baseurl = "/759/battleship/public/";
+    const baseurl = "/";
     const svgns = "http://www.w3.org/2000/svg";
-    const debug = false;
+    const debug = true;
 
     var game = undefined,
         currentStatus = "WAITING",
@@ -14,6 +14,16 @@
         gameCleanedUp = false,
         board = [],
         moverId, myX, myY, origX, origY, origWidth, origHeight, origOrient, origLength;
+
+
+
+    $(window).on('beforeunload', function(){
+      abandon();
+    });
+
+    $(window).on('unload', function(){
+      abandon();
+    });
 
     function abandon(){
       if(typeof game != 'undefined' && game.status === "PLAYING"){
@@ -34,36 +44,6 @@
       }
     }
 
-    $(window).on('beforeunload', function(){
-      abandon();
-    });
-
-    $(window).on('unload', function(){
-      abandon();
-    });
-
-    /*$(".randomizor a").on('click', function(e){
-      e.preventDefault();
-      $( ".board svg" ).remove( ".gamepiece" );
-
-      $.ajax({
-        type: "POST",
-        async: true,
-        cache: false,
-        url: baseurl+"randomize",
-        data: $( this ).serialize(),
-        dataType: "json",
-        success: function(data){
-
-          $(".board svg").append(data);
-
-        },
-        failure: function() {
-
-        },
-      });
-
-    });*/
 
     function updateBoardArray(){
 
@@ -100,38 +80,10 @@
     }
 
 
-    $("#starter").on("submit",function(e){
-      e.preventDefault();
-      $(this).fadeOut(300, function() { $(this).remove(); });
-      $('.instruct').fadeOut(300, function() { $('.instruct').remove(); });
 
-      $.ajax({
-        type: "POST",
-        async: true,
-        cache: false,
-        url: baseurl+"findGame",
-        data: $( this ).serialize(),
-        dataType: "json",
-        success: function(data){
 
-          game = data.data;
-          $(this).hide();
-          $( "input[name*='gameId']" ).val(game.id);
 
-          if(typeof game != 'undefined'){
-            $.growl.notice({ message: "Waiting for an opponent" });
-            chatPoller = setInterval(pollChat, 2500);
-            gamePoller = setInterval(pollGame, 5000);
-          }
-
-        },
-        failure: function() {
-
-        },
-      });
-
-      return false;
-    });
+    //chat functions
 
     $("#chat").on("submit",function(e){
       e.preventDefault();
@@ -184,6 +136,41 @@
       }
     }
 
+    //play functions
+
+    $("#starter").on("submit",function(e){
+      e.preventDefault();
+      $(this).fadeOut(300, function() { $(this).remove(); });
+      $('.instruct').fadeOut(300, function() { $('.instruct').remove(); });
+
+      $.ajax({
+        type: "POST",
+        async: true,
+        cache: false,
+        url: baseurl+"findGame",
+        data: $( this ).serialize(),
+        dataType: "json",
+        success: function(data){
+
+          game = data.data;
+          $(this).hide();
+          $( "input[name*='gameId']" ).val(game.id);
+
+          if(typeof game != 'undefined'){
+            $.growl.notice({ message: "Waiting for an opponent" });
+            chatPoller = setInterval(pollChat, 2500);
+            gamePoller = setInterval(pollGame, 5000);
+          }
+
+        },
+        failure: function() {
+
+        },
+      });
+
+      return false;
+    });
+
     function pollGame(){
       if(typeof game != 'undefined'){
         $.ajax({
@@ -208,7 +195,7 @@
               clearInterval(gamePoller);
               $('.opponent-name').text("");
               window.alert('Your opponent has forfeited the match.');
-              window.location.href='http://gagelafleur.com/759/battleship/public/';
+              window.location.href='/';
             }else if(currentStatus === "WAITING"  && game.status === "PLAYING"){
               //remove ability to move pieces on own board
               if(debug){
@@ -334,6 +321,30 @@
 
     }
 
+    function compareBoards(arr1, arr2) {
+
+      if(arr1.length !== arr2.length){
+        return false;
+      }
+
+      if(debug){
+        console.log(arr1[0].length, arr2[0].length);
+      }
+
+      for(var i = 0; i < arr1.length; i++) {
+        for(var j = 0; j < arr1[i].length; j++) {
+          if(arr1[i][j] !== arr2[i][j]){
+            return false;
+          }
+        }
+      }
+
+      return true;
+    }
+
+
+    //move/board hit functions
+
     function updateBoardHits(){
 
       $('.hit-square').remove();
@@ -431,6 +442,27 @@
       }
     }
 
+    function placePeg(target, hit){
+      var fill = "white";
+      var targetSquare = document.getElementById( target );
+      if(hit){
+        fill = "red";
+      }
+      var circle = document.createElementNS(svgns, 'circle');
+      circle.setAttributeNS(null, 'cx', (parseInt(targetSquare.getAttribute("x"))+parseInt((targetSquare.getAttribute("width")/2))));
+      circle.setAttributeNS(null, 'cy', (parseInt(targetSquare.getAttribute("y"))+parseInt((targetSquare.getAttribute("height")/2))));
+      circle.setAttributeNS(null, 'r', 7);
+      circle.setAttributeNS(null, 'fill', fill);
+      circle.setAttributeNS(null, 'stroke', "black");
+      circle.setAttributeNS(null, 'stroke-width', "2px");
+      document.getElementById( "opponent-board" ).getElementsByTagName("svg")[0].appendChild(circle);
+    }
+
+
+
+
+    //board setup functions
+
     $(".gamepiece").on('mousedown', function(){
 
       if(debug){
@@ -486,23 +518,6 @@
 
       }
     }
-
-    function placePeg(target, hit){
-      var fill = "white";
-      var targetSquare = document.getElementById( target );
-      if(hit){
-        fill = "red";
-      }
-      var circle = document.createElementNS(svgns, 'circle');
-      circle.setAttributeNS(null, 'cx', (parseInt(targetSquare.getAttribute("x"))+parseInt((targetSquare.getAttribute("width")/2))));
-      circle.setAttributeNS(null, 'cy', (parseInt(targetSquare.getAttribute("y"))+parseInt((targetSquare.getAttribute("height")/2))));
-      circle.setAttributeNS(null, 'r', 7);
-      circle.setAttributeNS(null, 'fill', fill);
-      circle.setAttributeNS(null, 'stroke', "black");
-      circle.setAttributeNS(null, 'stroke-width', "2px");
-      document.getElementById( "opponent-board" ).getElementsByTagName("svg")[0].appendChild(circle);
-    }
-
 
     function setMove(pId){
 
@@ -734,25 +749,6 @@
 
     }
 
-    function compareBoards(arr1, arr2) {
 
-      if(arr1.length !== arr2.length){
-        return false;
-      }
-
-      if(debug){
-        console.log(arr1[0].length, arr2[0].length);
-      }
-
-      for(var i = 0; i < arr1.length; i++) {
-        for(var j = 0; j < arr1[i].length; j++) {
-          if(arr1[i][j] !== arr2[i][j]){
-            return false;
-          }
-        }
-      }
-
-      return true;
-    }
 
 })(jQuery);
